@@ -14,33 +14,14 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Tutorials point"
-        android:id="@+id/textView"
-        android:layout_below="@+id/textview"
-        android:layout_centerHorizontal="true"
-        android:textColor="#ff7aff24"
-        android:textSize="35dp" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView"
-        android:src="@drawable/icon"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:theme="@style/Base.TextAppearance.AppCompat" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Turn On"
         android:id="@+id/button"
-        android:layout_below="@+id/imageView"
-        android:layout_toStartOf="@+id/imageView"
-        android:layout_toLeftOf="@+id/imageView"
+        android:layout_below="@id/textview"
+        android:layout_alignParentLeft="true"
         android:clickable="true"
         android:onClick="on" />
 
@@ -59,9 +40,9 @@
         android:text="List devices"
         android:onClick="list"
         android:id="@+id/button3"
-        android:layout_below="@+id/imageView"
-        android:layout_toRightOf="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView" />
+        android:layout_below="@+id/textview"
+        android:layout_alignParentRight="true"
+        />
 
     <Button
         android:layout_width="wrap_content"
@@ -83,14 +64,57 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <ListView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button"
-        android:layout_below="@+id/textView2" />
+        android:text="Server"
+        android:onClick="serverConnect"
+        android:id="@+id/button6"
+        android:layout_below="@+id/button4"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client"
+        android:onClick="clientConnect"
+        android:id="@+id/button7"
+        android:layout_below="@+id/button4"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_below="@+id/button6"
+        android:layout_centerHorizontal="true"
+        android:textColor="#ff7aff24"
+        android:textSize="15dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:onClick="sendText"
+        android:id="@+id/button8"
+        android:layout_below="@+id/editText"
+        android:layout_centerHorizontal="true"
+       />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:text="Received message "
+        android:id="@+id/receivedMessage"
+        android:textColor="#ff34ff06"
+        android:textSize="10dp"
+        android:layout_below="@+id/button8"
+        android:layout_centerHorizontal="true"
+     />
 
     <TextView
         android:layout_width="wrap_content"
@@ -98,9 +122,19 @@
         android:text="Paired devices:"
         android:id="@+id/textView2"
         android:textColor="#ff34ff06"
-        android:textSize="25dp"
-        android:layout_below="@+id/button4"
-        android:layout_alignLeft="@+id/listView"
-        android:layout_alignStart="@+id/listView" />
+        android:textSize="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/receivedMessage" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/listView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignStart="@+id/textView2"
+        android:layout_below="@+id/textView2" />
+
+
 
 </RelativeLayout>
