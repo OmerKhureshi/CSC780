@@ -1,0 +1,85 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.drawsome.bluetooth.BluetoothConnectionActivity"
+    android:background="#CCFFCC"
+   >
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Initiate"
+        android:onClick="initiate"
+        android:id="@+id/initiateButton"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:layout_margin="20dp"
+        android:padding="5dp"
+        android:background="#339966"
+        android:textColor="#FFFFFF"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" Join"
+        android:onClick="join"
+        android:id="@+id/joinButton"
+        android:layout_below="@+id/initiateButton"
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:layout_margin="20dp"
+        android:padding="5dp"
+        android:background="#339966"
+        android:textColor="#FFFFFF"/>
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_below="@id/joinButton"
+        android:layout_centerHorizontal="true"
+        android:textColor="#990000"
+        android:textSize="15dp"
+        android:layout_margin="20dp"
+        android:padding="5dp"
+        android:theme="@android:style/Widget.Holo.EditText"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:onClick="sendText"
+        android:id="@+id/sendButton"
+        android:layout_below="@id/editText"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
+        android:padding="5dp"
+        android:background="#339966"
+        android:textColor="#FFFFFF"/>
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="20dp"
+        android:text="Received message "
+        android:id="@+id/received"
+        android:textColor="#990000"
+        android:textSize="15dp"
+        android:layout_below="@id/sendButton"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:text=" "
+        android:id="@+id/receivedMessage"
+        android:textColor="#FF3300"
+        android:textSize="15dp"
+        android:layout_below="@id/received"
+        android:layout_centerHorizontal="true"
+        />
+
+</RelativeLayout>
