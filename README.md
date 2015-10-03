@@ -10,3 +10,4 @@ Week 2 - Sep 21-27:</br>
 1. The basic app was developed.</br>
 2. Worked on resolving issues related to transfering string between two paired devices.</br>
 3. Developed the feature to transfer strings between two devices.</br>
+4. Plan for next week: Add drawing canvas and implement NFC to pair devices.
