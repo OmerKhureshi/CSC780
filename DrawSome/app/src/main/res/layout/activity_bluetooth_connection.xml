@@ -81,5 +81,14 @@
         android:layout_below="@id/received"
         android:layout_centerHorizontal="true"
         />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Drawing"
+        android:onClick="callDrawingActivity"
+        android:id="@+id/button8"
+        android:layout_below="@id/receivedMessage"
+        android:layout_centerHorizontal="true"
+        />
 
 </RelativeLayout>

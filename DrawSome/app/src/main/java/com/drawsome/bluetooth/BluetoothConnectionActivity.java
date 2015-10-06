@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.drawing.DrawingActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -324,6 +325,11 @@ public class BluetoothConnectionActivity extends Activity {
         EditText text = (EditText)findViewById(R.id.editText);
         connectedThread.write(text.getText().toString());
 
+    }
+
+    public void callDrawingActivity(View v) {
+        Intent intent = new Intent(this,DrawingActivity.class);
+        startActivity(intent);
     }
     @Override
     public void onDestroy() {
