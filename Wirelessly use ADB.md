@@ -1,5 +1,5 @@
 # Use ADB wirelessly.
-You might be using usb to connect your android device to laptop to test your app.<br> But there's an easier way, use wireless debug feature in android studio. This is especially convenient if you are woking on multiple devices. 
+You might be using usb to connect your android device to laptop to test your app.<br> But there's an easier way, use wireless debug feature in android studio which allows you to connect android devices over wifi network. This is especially convenient if you are woking on multiple devices. 
 Follow the steps below to set this up. You can use the terminal console in android studio to execute the commands below.<br><br>
 1. Connect your device to laptop with usb and enter usb debugging mode,<br>
 `adb usb`<br><br>
@@ -7,7 +7,7 @@ Follow the steps below to set this up. You can use the terminal console in andro
 `adb devices`<br><br>
 3.Switch to tcpip mode, here 5555 is the port.<br>
 `adb tcpip 5555`<br><br>
-4. Unplug your device and connect wirelessly.<br>
+4. Unplug your device and ensure that android device and laptop are on same WiFi network. Connect device wirelessly using,<br>
 `adb connect <ip-address-of-device>`<br><br>
 5. Check again if device is connected,<br>
 `adb devices`<br><br>
