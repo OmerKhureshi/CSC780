@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_bluetooth_connection">Drawsome</string>
     <string name="title_activity_drawing">DrawingActivity</string>
+    <string name="paint">Paint</string>
+    <string name="title_activity_view_drawing">ViewDrawingActivity</string>
 </resources>

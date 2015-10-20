@@ -1,80 +1,52 @@
 package com.drawsome.drawing;
 
 import android.app.Activity;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.bluetooth.ConnectedThread;
+import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 public class DrawingActivity extends Activity {
 
-    View mView;
-    private Paint mPaint;
-
+    DrawView mView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawing);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.myDrawing);
-        mView = new DrawingView(this);
-        layout.addView(mView, new LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
-        init();
+        mView = (DrawView) findViewById(R.id.draw);
+        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmServerSocket());
+        mView.startThread();
+
+    }
+    public void onLargeBrushClick(View v) {
+        mView.setStrokeWidth(30);
+    }
+    public void onMedBrushClick(View v) {
+        mView.setStrokeWidth(20);
+    }
+    public void onSmallBrushClick(View v) {
+        mView.setStrokeWidth(10);
     }
 
-    private void init() {
-        mPaint = new Paint();
-        mPaint.setDither(true);
-        mPaint.setColor(0xFFFFFF00);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(4);
+    public void setColor(View v) {
+     if(v instanceof ImageButton) {
+         ImageButton img = (ImageButton) v;
+         ColorDrawable colorDrawable = (ColorDrawable)img.getBackground();
+         System.out.println("****************** color " + colorDrawable.getColor());
+
+         mView.setColor(colorDrawable.getColor());
+     }
+
     }
 
-    class DrawingView extends View {
-        private Path path;
-        private Bitmap mBitmap;
-        public DrawingView(Context context) {
-            super(context);
-            path = new Path();
-            /*mBitmap = Bitmap.createBitmap(820, 480, Bitmap.Config.ARGB_8888);
-            mCanvas = new Canvas(mBitmap);
-            */
-            this.setBackgroundColor(Color.BLACK);
-        }
 
-        @Override
-        public boolean onTouchEvent(MotionEvent event) {
-            //    mCanvas.drawPath(path, mPaint);
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                path.moveTo(event.getX(), event.getY());
-                //  path.lineTo(event.getX(), event.getY());
-            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                path.lineTo(event.getX(), event.getY());
-                invalidate();
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-            if(path != null && mPaint != null) {
-                canvas.drawPath(path,mPaint);
-            }
-        }
-    }
 }

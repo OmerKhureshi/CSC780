@@ -9,9 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,17 +21,16 @@ import android.widget.Toast;
 
 import com.drawsome.R;
 import com.drawsome.drawing.DrawingActivity;
+import com.drawsome.drawing.ViewDrawingActivity;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.UUID;
 
 public class BluetoothConnectionActivity extends Activity {
 
     private BluetoothAdapter BA;
     Button joinButton,initiateButton, sendButton;
-    ConnectedThread connectedThread;
+   // ConnectedThread connectedThread;
     private EditText editText;
     private TextView receivedMessageText;
     private BroadcastReceiver mReceiver;
@@ -44,97 +40,6 @@ public class BluetoothConnectionActivity extends Activity {
     private static final int SERVER_CONNECTION = 2;
     private static final int CLIENT_CONNECTION = 3;
     private static final String UUID_STRING = "2511000-80cf0-11bd-b23e-10b96e4ef00d";
-
-    private final class UIHandler extends Handler {
-        public void handleMessage(Message msg) {
-            /**
-             * Retrieve the contents of the message and then update the UI
-             */
-
-            String message  =  msg.getData().getString("ReceivedMessage");
-
-            Toast.makeText(getApplicationContext(), "message " + message, Toast.LENGTH_LONG);
-            receivedMessageText.setText(message);
-        }
-
-    }
-    final private Handler handler = new UIHandler();
-
-    private final class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-
-
-        public ConnectedThread(BluetoothSocket socket ) {
-            mmSocket = socket;
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-
-            // Get the input and output streams, using temp objects because
-            // member streams are final
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-
-        public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes; // bytes returned from read()
-            // Keep listening to the InputStream until an exception occurs
-            while (true) {
-                try {
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                    if(bytes > 0) {
-
-                        String message = new String(buffer);
-                        Log.d("Receieved message ", message);
-                        Message msg = handler.obtainMessage();
-
-                        /**
-                         * Class Message can store two integer values that can be
-                         * passed as parameters. If the data that needs to be passed
-                         * is more complex, use Message.setData()
-                         */
-                        Bundle b = new Bundle();
-                        b.putString("ReceivedMessage",message);
-                        msg.setData(b);
-                        handler.sendMessage(msg);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
-
-        /* Call this from the main activity to send data to the remote device */
-        public void write(String message) {
-            try {
-                mmOutStream.write(message.getBytes());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        /* Call this from the main activity to shutdown the connection */
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
     @Override
@@ -265,12 +170,14 @@ public class BluetoothConnectionActivity extends Activity {
                 } catch(IOException io) {
                     System.out.println("IOException " + io.getMessage());
                 }
-                connectedThread = new ConnectedThread(socket);
-                connectedThread.start();
+                SingletonBluetoothSocket.getBluetoothSocketInstance().setMmServerSocket(socket);
                 break;
 
             }
         }
+        Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
+        startActivity(callDrawingActivity);
+
     }
 
     public void clientConnect(View v) {
@@ -298,6 +205,7 @@ public class BluetoothConnectionActivity extends Activity {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
             mmSocket.connect();
+            SingletonBluetoothSocket.getBluetoothSocketInstance().setMmClientSocket(mmSocket);
         } catch (IOException connectException) {
             // Unable to connect; close the socket and get out
             connectException.printStackTrace();
@@ -313,24 +221,22 @@ public class BluetoothConnectionActivity extends Activity {
         //manageConnectedSocket(mmSocket);
         Toast.makeText(this,"Connection successful",Toast.LENGTH_LONG).show();
 
-        connectedThread = new ConnectedThread(mmSocket);
-        connectedThread.start();
+        Intent callViewActivityIntent = new Intent(this,ViewDrawingActivity.class);
+        startActivity(callViewActivityIntent);
+
 
 
     }
 
 
-    public void sendText(View v) {
+    /*public void sendText(View v) {
 
         EditText text = (EditText)findViewById(R.id.editText);
         connectedThread.write(text.getText().toString());
 
     }
+*/
 
-    public void callDrawingActivity(View v) {
-        Intent intent = new Intent(this,DrawingActivity.class);
-        startActivity(intent);
-    }
     @Override
     public void onDestroy() {
         BA.cancelDiscovery();

@@ -27,6 +27,10 @@
             android:name=".drawing.DrawingActivity"
             android:label="@string/title_activity_drawing" >
         </activity>
+        <activity
+            android:name=".drawing.ViewDrawingActivity"
+            android:label="@string/title_activity_view_drawing" >
+        </activity>
     </application>
 
 </manifest>
