@@ -4,13 +4,18 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawmate.drawmate.R;
@@ -27,6 +32,10 @@ public class DrawActivity extends Activity implements View.OnClickListener {
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
     //sizes
     private float smallBrush, mediumBrush, largeBrush;
+
+    private Spinner brush;
+    private int brushDefSize;
+    private int eraserSize;
     BluetoothHelper bluetoothHelper;
 
     @Override
@@ -49,6 +58,17 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
+        brushDefSize = R.integer.medium_size;
+
+        //brush button
+        brush = (Spinner) findViewById(R.id.brushes_spinner);
+        MyAdapterBrushSize myAdapterBrushSize = new MyAdapterBrushSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
+        brush.setAdapter(myAdapterBrushSize);
+
+        //eraser button
+        brush = (Spinner) findViewById(R.id.eraser_spinner);
+        MyAdapterEraserSize myAdapterEraserSize = new MyAdapterEraserSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
+        brush.setAdapter(myAdapterEraserSize);
 
         //draw button
         drawBtn = (ImageButton)findViewById(R.id.draw_btn);
@@ -69,6 +89,110 @@ public class DrawActivity extends Activity implements View.OnClickListener {
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
+    }
+
+    public class MyAdapterBrushSize extends ArrayAdapter<String> {
+
+        String[] sObj;
+
+        public MyAdapterBrushSize(Context context, int resource, String[] objs) {
+            super(context, resource, objs);
+            sObj = objs;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view= getLayoutInflater().inflate(R.layout.spinner_view_brush_size, parent,false);
+            return view;
+        }
+
+        public View getCustomView(int position, View convertView, ViewGroup parent) {
+
+            LayoutInflater inflater = getLayoutInflater();
+            View row=inflater.inflate(R.layout.spinner_item_brush_size, parent, false);
+            final TextView label= (TextView) row.findViewById(R.id.brushes_spinnerItem_textView);
+            label.setText(String.valueOf(brushDefSize));
+
+            SeekBar seekBar = (SeekBar) row.findViewById(R.id.brushes_spinnerItem_seekBar);
+            seekBar.setProgress(brushDefSize);
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    label.setText(String.valueOf(progress));
+                    drawView.setErase(false);
+                    drawView.setBrushSize(progress);
+                    brushDefSize = progress;
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            return row;
+        }
+    }
+
+    public class MyAdapterEraserSize extends ArrayAdapter<String> {
+
+        String[] sObj;
+
+        public MyAdapterEraserSize(Context context, int resource, String[] objs) {
+            super(context, resource, objs);
+            sObj = objs;
+        }
+
+        @Override
+        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view= getLayoutInflater().inflate(R.layout.spinner_view_eraser, parent,false);
+            return view;
+        }
+
+        public View getCustomView(int position, View convertView, ViewGroup parent) {
+
+            LayoutInflater inflater = getLayoutInflater();
+            View row=inflater.inflate(R.layout.spinner_item_eraser, parent, false);
+            final TextView label= (TextView) row.findViewById(R.id.eraser_spinnerItem_textView);
+            label.setText(String.valueOf(brushDefSize));
+
+            SeekBar seekBar = (SeekBar) row.findViewById(R.id.eraser_spinnerItem_seekBar);
+            seekBar.setProgress(brushDefSize);
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    label.setText(String.valueOf(progress));
+                    drawView.setErase(true);
+                    drawView.setBrushSize(progress);
+                    brushDefSize = progress;
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            return row;
+        }
     }
 
     public void pickColor (View view) {

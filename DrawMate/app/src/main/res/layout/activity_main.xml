@@ -14,6 +14,11 @@
         android:layout_gravity="center"
         android:orientation="horizontal" >
 
+        <Spinner
+            android:id="@+id/brushes_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" />
+
         <ImageButton
             android:id="@+id/new_btn"
             android:layout_width="wrap_content"
@@ -27,6 +32,11 @@
             android:layout_height="fill_parent"
             android:contentDescription="@string/brush"
             android:src="@drawable/brush" />
+
+        <Spinner
+            android:id="@+id/eraser_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" />
 
         <ImageButton
             android:id="@+id/erase_btn"
