@@ -23,7 +23,9 @@ import com.drawmate.drawmate.bluetooth.BluetoothHelper;
 
 import java.util.UUID;
 
-
+/**
+ * This activity is the screen where canvas is drawn.
+ */
 public class DrawActivity extends Activity implements View.OnClickListener {
 
     //custom drawing view
