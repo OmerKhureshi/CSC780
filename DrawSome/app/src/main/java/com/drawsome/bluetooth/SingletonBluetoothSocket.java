@@ -8,9 +8,7 @@ import android.bluetooth.BluetoothSocket;
 public class SingletonBluetoothSocket {
 
     private static SingletonBluetoothSocket singletonBluetoothSocket = new SingletonBluetoothSocket();
-    private BluetoothSocket mmServerSocket;
-    private BluetoothSocket mmClientSocket;
-
+    private BluetoothSocket mmSocket;
 
     private SingletonBluetoothSocket() {
 
@@ -20,25 +18,11 @@ public class SingletonBluetoothSocket {
 
     }
 
-    public  BluetoothSocket getMmServerSocket() {
-        return mmServerSocket;
+    public  BluetoothSocket getMmSocket() {
+        return mmSocket;
     }
 
-    public  void setMmServerSocket(BluetoothSocket mmServerSocket) {
-        this.mmServerSocket = mmServerSocket;
+    public  void setMmSocket(BluetoothSocket mmSocket) {
+        this.mmSocket = mmSocket;
     }
-
-    public  BluetoothSocket getMmClientSocket() {
-        return mmClientSocket;
-    }
-
-    public  void setMmClientSocket(BluetoothSocket mmClientSocket) {
-        this.mmClientSocket = mmClientSocket;
-    }
-
-
-
-
-
-
 }

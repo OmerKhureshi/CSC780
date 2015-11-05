@@ -1,16 +1,13 @@
 package com.drawsome.drawing;
 
 import android.app.Activity;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.drawsome.R;
-import com.drawsome.bluetooth.ConnectedThread;
+import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 public class ViewDrawingActivity extends Activity {
@@ -22,9 +19,11 @@ public class ViewDrawingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_drawing);
+        ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().interrupt();
+        Log.d("Thread interrupted ","" +ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
         mView = (DrawView) findViewById(R.id.viewDraw);
         mView.setEnabled(false);
-        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmClientSocket());
+        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
     }
 

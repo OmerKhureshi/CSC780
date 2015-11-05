@@ -8,22 +8,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
-import com.drawsome.bluetooth.ConnectedThread;
+import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 import java.util.UUID;
@@ -46,8 +44,11 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
             actionBar.hide();
         }
         setContentView(R.layout.activity_drawing);
+        ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().interrupt();
+        Log.d("Thread interrupted ", "" + ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
+
         mView = (DrawView) findViewById(R.id.draw);
-        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmServerSocket());
+        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
 
         //sizes from dimensions

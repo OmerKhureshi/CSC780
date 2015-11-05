@@ -23,6 +23,33 @@ public class DrawingDetailsBean implements Parcelable {
     private float strokewidth;
     private List<Point> pointList;
 
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    private int width;
+    private int height;
+    public boolean isEraserFlag() {
+        return eraserFlag;
+    }
+
+    public void setEraserFlag(boolean eraserFlag) {
+        this.eraserFlag = eraserFlag;
+    }
+
+    private boolean eraserFlag;
     public int getPaint() {
         return paint;
     }

@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by pooja on 10/21/2015.
  */
-public class ConnectedWriteThread  extends Thread {
+public class ConnectedDrawingWriteThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
@@ -24,7 +24,7 @@ public class ConnectedWriteThread  extends Thread {
 
     List<DrawingDetailsBean> listToSend = null;
 
-    public ConnectedWriteThread(BluetoothSocket socket) {
+    public ConnectedDrawingWriteThread(BluetoothSocket socket) {
         mmSocket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;

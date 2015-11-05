@@ -170,7 +170,10 @@ public class BluetoothConnectionActivity extends Activity {
                 } catch(IOException io) {
                     System.out.println("IOException " + io.getMessage());
                 }
-                SingletonBluetoothSocket.getBluetoothSocketInstance().setMmServerSocket(socket);
+                SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(socket);
+                ConnectedThread connectedThread = new ConnectedThread();
+                ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
+                connectedThread.start();
                 break;
 
             }
@@ -205,7 +208,10 @@ public class BluetoothConnectionActivity extends Activity {
             // Connect the device through the socket. This will block
             // until it succeeds or throws an exception
             mmSocket.connect();
-            SingletonBluetoothSocket.getBluetoothSocketInstance().setMmClientSocket(mmSocket);
+            SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(mmSocket);
+            ConnectedThread connectedThread = new ConnectedThread();
+            ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
+            connectedThread.start();
         } catch (IOException connectException) {
             // Unable to connect; close the socket and get out
             connectException.printStackTrace();

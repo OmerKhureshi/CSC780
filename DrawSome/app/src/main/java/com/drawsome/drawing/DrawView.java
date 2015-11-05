@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -19,8 +20,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.drawsome.R;
-import com.drawsome.bluetooth.ConnectedThread;
-import com.drawsome.bluetooth.ConnectedWriteThread;
+import com.drawsome.bluetooth.ConnectedDrawingReadThread;
+import com.drawsome.bluetooth.ConnectedDrawingWriteThread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +33,16 @@ public class DrawView extends View {
     //canvas bitmap
     private Bitmap canvasBitmap;
     private Canvas drawCanvas;
-    ConnectedThread connectedThread;
-    ConnectedWriteThread connectedWriteThread;
+    ConnectedDrawingReadThread connectedDrawingReadThread;
+    ConnectedDrawingWriteThread connectedDrawingWriteThread;
     DrawingDetailsBean drawingDetailsBean = null;
     List<Point> pointList = null;
     private float brushSize, lastBrushSize;
     BluetoothSocket mmSocket;
     //erase flag
     private boolean erase=false;
+    private int canvasHeight,canvasWidth;
+
     final private Handler handler = new UIHandler();
 
 
@@ -76,10 +79,10 @@ public class DrawView extends View {
     }
 
     public void startThread() {
-        connectedThread = new ConnectedThread(mmSocket,handler);
-        connectedThread.start();
-        connectedWriteThread = new ConnectedWriteThread(mmSocket);
-        connectedWriteThread.start();
+        connectedDrawingReadThread = new ConnectedDrawingReadThread(mmSocket,handler);
+        connectedDrawingReadThread.start();
+        connectedDrawingWriteThread = new ConnectedDrawingWriteThread(mmSocket);
+        connectedDrawingWriteThread.start();
     }
     public BluetoothSocket getMmSocket() {
         return mmSocket;
@@ -111,9 +114,12 @@ public class DrawView extends View {
             point.setY(event.getY());
             path.moveTo(event.getX(), event.getY());
             pointList.add(point);
+            drawingDetailsBean.setHeight(canvasHeight);
+            drawingDetailsBean.setWidth(canvasWidth);
             drawingDetailsBean.setPointList(pointList);
             drawingDetailsBean.setPaint(mPaint.getColor());
             drawingDetailsBean.setStrokewidth(mPaint.getStrokeWidth());
+            drawingDetailsBean.setEraserFlag(erase);
             //  path.lineTo(event.getX(), event.getY());
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             path.lineTo(event.getX(), event.getY());
@@ -125,26 +131,16 @@ public class DrawView extends View {
             drawCanvas.drawPath(path, mPaint);
             invalidate();
 
-            /*DrawingDetailsBean bean = new DrawingDetailsBean();
-            bean.setPath(path);
-            bean.setPaint(mPaint);
-            Log.d("DrawingActivity ","sending from touchevent " + bean.getPath() + " " + bean.getPaint());
-            connectedThread.sendDrawing(bean);
-*/
-  /*          BitmapDataObject bitmapDataObject = new BitmapDataObject();
-            bitmapDataObject.setCurrentHeight(canvasBitmap.getHeight());
-            bitmapDataObject.setCurrentWidth(canvasBitmap.getWidth());
-            bitmapDataObject.setCurrentImage(canvasBitmap);
-            Log.d("Sending bitmap from drawView " , bitmapDataObject.toString());
-            connectedThread.sendBitmap(bitmapDataObject);*/
-
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
 
             path.reset();
-            connectedWriteThread.addToListToSend(drawingDetailsBean);
-            //connectedWriteThread.notify();
-            //connectedThread.sendDrawingDetails(drawingDetailsBean);
-           // drawingDetailsBean.sendData();
+            Message msg = handler.obtainMessage();
+            Bundle b = new Bundle();
+            b.putParcelable("DrawingDetails",drawingDetailsBean);
+            b.putString("type","send");
+            msg.setData(b);
+            handler.sendMessage(msg);
+
         }
         return true;
     }
@@ -160,9 +156,12 @@ public class DrawView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        Log.d("received height" ,"   " + h + "   " + w);
+        Log.d("received height", "   " + h + "   " + w);
+        canvasHeight = h;
+        canvasWidth = w;
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);
+
     }
 
     private final class UIHandler extends Handler {
@@ -171,42 +170,55 @@ public class DrawView extends View {
              * Retrieve the contents of the message and then update the UI
              */
             System.out.println("in ui handler");
-            List<DrawingDetailsBean> drawingList = msg.getData().getParcelableArrayList("DrawingDetails");
-           if(drawingList != null) {
-               System.out.println("drawing list not null");
-               for(DrawingDetailsBean bean: drawingList) {
-                   //canvasBitmap = bitmapDataObject.getCurrentImage();
-                   List<Point> pointList = bean.getPointList();
-                   Paint tempPaint = new Paint();
-                   tempPaint.setStyle(Paint.Style.STROKE);
-                   tempPaint.setStrokeJoin(Paint.Join.ROUND);
-                   tempPaint.setStrokeCap(Paint.Cap.ROUND);
-                   tempPaint.setDither(true);
-                   tempPaint.setAntiAlias(true);
 
-                   tempPaint.setColor(bean.getPaint());
-                   tempPaint.setStrokeWidth(bean.getStrokewidth());
-                   Point originalPoint = pointList.get(0);
-                   pointList.remove(0);
-                   Path tempPath = new Path();
-                   tempPath.moveTo(originalPoint.getX(),originalPoint.getY());
-                   for(Point point1 : pointList){
-                       tempPath.lineTo(point1.getX(),point1.getY());
+            String type = msg.getData().getString("type");
+            if (type!= null && type.equalsIgnoreCase("send")) {
+                connectedDrawingReadThread.sendDrawingDetails(drawingDetailsBean);
 
-                       Log.d("Point " , point1.getX() + "  " + point1.getY());
-                   }
-                   drawCanvas.drawPath(tempPath,tempPaint);
-                   invalidate();
+            } else {
 
-               }
-           }
+                List<DrawingDetailsBean> drawingList = msg.getData().getParcelableArrayList("DrawingDetails");
 
 
-/*
-            DrawingDetailsBean bean = msg.getData().getParcelable("DrawingBean");
-            Log.d(" in handler " , "received " + bean.getPath() + "  " + bean.getPaint());
-            drawOnCanvas(bean);
-*/
+                if (drawingList != null) {
+                    System.out.println("drawing list not null");
+                    for (DrawingDetailsBean bean : drawingList) {
+
+                        float aspectHeight = ((float)canvasHeight)/bean.getHeight();
+                        float aspectWidth = ((float)canvasWidth)/bean.getWidth();
+
+                        Log.d("drawview aspect  " , aspectHeight + "   " + aspectWidth) ;
+                        //canvasBitmap = bitmapDataObject.getCurrentImage();
+                        List<Point> pointList = bean.getPointList();
+                        Paint tempPaint = new Paint();
+                        tempPaint.setStyle(Paint.Style.STROKE);
+                        tempPaint.setStrokeJoin(Paint.Join.ROUND);
+                        tempPaint.setStrokeCap(Paint.Cap.ROUND);
+                        tempPaint.setDither(true);
+                        tempPaint.setAntiAlias(true);
+                        tempPaint.setColor(bean.getPaint());
+                        if (bean.isEraserFlag())
+                            tempPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                        else
+                            tempPaint.setXfermode(null);
+
+                        tempPaint.setStrokeWidth(bean.getStrokewidth());
+                        Point originalPoint = pointList.get(0);
+                        pointList.remove(0);
+                        Path tempPath = new Path();
+                        tempPath.moveTo(originalPoint.getX() * aspectWidth, originalPoint.getY() * aspectHeight);
+                        for (Point point1 : pointList) {
+                            tempPath.lineTo(point1.getX() * aspectWidth, point1.getY() * aspectHeight);
+
+                            Log.d("Point ", point1.getX() + "  " + point1.getY());
+                        }
+                        drawCanvas.drawPath(tempPath, tempPaint);
+                        invalidate();
+
+
+                    }
+                }
+            }
         }
 
     }

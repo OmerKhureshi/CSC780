@@ -1,130 +1,93 @@
 package com.drawsome.bluetooth;
 
-import android.bluetooth.BluetoothSocket;
-import android.os.Bundle;
-import android.os.Message;
+import android.os.Handler;
 import android.util.Log;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import android.os.Handler;
-
-import com.drawsome.drawing.DrawingDetailsBean;
-import com.drawsome.drawing.MarshalHandler;
-
 /**
- * Created by pooja on 10/11/2015.
+ * Created by pooja on 11/4/2015.
  */
+public class ConnectedThread extends Thread{
 
+    private final InputStream mmInStream;
+    private final OutputStream mmOutStream;
+    private List<String> data = new ArrayList<String>();
+    private boolean flag = true;
+    public ConnectedThread() {
 
-    public class ConnectedThread extends Thread {
-        private final BluetoothSocket mmSocket;
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
-        private final Handler handler;
-
-        public ConnectedThread(BluetoothSocket socket,Handler handler) {
-            mmSocket = socket;
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-            this.handler = handler;
-            // Get the input and output streams, using temp objects because
-            // member streams are final
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-
-        public void run() {
-            byte[] buffer = new byte[20000];  // buffer store for the stream
-            byte[] tempBuffer = new byte[20];
-            int bytes; // bytes returned from read()
-            // Keep listening to the InputStream until an exception occurs
-            while (true) {
-                try {
-                    // Read from the InputStream
-                   bytes = mmInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                    if(bytes > 0) {
-                        Log.d("Received bytes ","" + bytes);
-                       ArrayList<DrawingDetailsBean> drawingList = MarshalHandler.getMarshalHandlerInstance().unmarshal(buffer,bytes);
-                    //    BitmapDataObject bitmapDataObject = BitmapDataObject.deserialize(mmInStream);
-                       // BitmapDataObject bitmapDataObject = buffer.re
-                       /* DrawingDetailsBean bean = DrawingDetailsBean.deserialize(buffer);
-                        Log.d("Receieved message ", bean.getPath() + "   " + bean.getPaint());
-                       */
-                        Log.d("Received bean ",drawingList.toString());
-                        Message msg = handler.obtainMessage();
-
-                        /**
-                         * Class Message can store two integer values that can be
-                         * passed as parameters. If the data that needs to be passed
-                         * is more complex, use Message.setData()
-                         */
-                        Bundle b = new Bundle();
-                //        b.putParcelable("DrawingBean", bean);
-                        int lengthOFList = drawingList.size();
-                        b.putInt("length",lengthOFList);
-
-                        b.putParcelableArrayList("DrawingDetails",drawingList);
-
-                       Log.d("snt data for display from connectedthread ", drawingList.toString());
-                       msg.setData(b);
-                       handler.sendMessage(msg);
-                    }
-//                    mmInStream.reset();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }
-
-        /* Call this from the main activity to send data to the remote device */
-        public void write(String message) {
-            try {
-                mmOutStream.write(message.getBytes());
-                mmOutStream.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        /* Call this from the main activity to send data to the remote device */
-
-
-    public  void sendDrawingDetails(DrawingDetailsBean drawingDetailsBean) {
+        InputStream tmpIn = null;
+        OutputStream tmpOut = null;
+        // Get the input and output streams, using temp objects because
+        // member streams are final
         try {
-            mmOutStream.write(MarshalHandler.getMarshalHandlerInstance().marshal(drawingDetailsBean));
-            Log.d("sending drawingDeails  " , drawingDetailsBean.toString());
-            mmOutStream.flush();
-
+            tmpIn = SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getInputStream();
+            tmpOut = SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        mmInStream = tmpIn;
+        mmOutStream = tmpOut;
     }
 
-        /* Call this from the main activity to shutdown the connection */
-        public void cancel() {
-            try {
-                mmSocket.close();
-                mmOutStream.close();
-                mmInStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+    @Override
+    public void run() {
+
+          byte[] buffer = new byte[200];  // buffer store for the stream
+          int bytes; // bytes returned from read()
+          // Keep listening to the InputStream until an exception occurs
+          while (flag) {
+              try {
+                  // Read from the InputStream
+                  if (mmInStream.available() > 0) {
+                      bytes = mmInStream.read(buffer);
+                      // Send the obtained bytes to the UI activity
+                      synchronized (this) {
+                          if (bytes > 0) {
+                              Log.d("Received bytes ", "" + bytes);
+                              data.add(new String(buffer));
+//                    mmInStream.reset();
+                          }
+                      }
+                  }
+                  }catch(IOException e){
+                      e.printStackTrace();
+                      break;
+                  }
+
+
+          }
+
+    }
+
+    public synchronized List<String> getData(){
+        return data;
+    }
+
+
+    /* Call this from the main activity to send data to the remote device */
+    public void write(String message) {
+        try {
+            mmOutStream.write(message.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    @Override
+    public void interrupt(){
+        try {
+            flag = false;
+            Log.d("Connected thread ","flag set false");
+
+        }finally{
+            super.interrupt();
         }
     }
-
+}
