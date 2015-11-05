@@ -8,100 +8,52 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="50dp"
-    android:background="@color/material_grey_100">
+    <!-- Top Buttons -->
 
-    <ImageButton
-        android:id="@+id/large_brush"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/large_brush"
-        android:onClick="onLargeBrushClick"/>
-    <ImageButton
-        android:id="@+id/medium_brush"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/medium_brush"
-        android:onClick="onMedBrushClick"/>
-    <ImageButton
-        android:id="@+id/small_brush"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:src="@drawable/small_brush"
-        android:onClick="onSmallBrushClick"/>
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal" >
 
+        <Spinner
+            android:id="@+id/brushes_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" />
+
+        <ImageButton
+            android:id="@+id/new_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/start_new"
+            android:src="@drawable/new_pic" />
+
+        <ImageButton
+            android:id="@+id/draw_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/brush"
+            android:src="@drawable/brush" />
+
+        <Spinner
+            android:id="@+id/eraser_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent" />
+
+        <ImageButton
+            android:id="@+id/erase_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/erase"
+            android:src="@drawable/eraser" />
+
+        <ImageButton
+            android:id="@+id/save_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:contentDescription="@string/save"
+            android:src="@drawable/save" />
     </LinearLayout>
-
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="50dp"
-    android:background="@color/material_grey_100">
-
-<ImageButton
-        android:id="@+id/color_FFFFFFFF"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="2dp"
-        android:background="#FFFFFFFF"
-        android:contentDescription="@string/paint"
-        android:onClick="setColor"
-        />
-    <ImageButton
-        android:id="@+id/color_000000"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="2dp"
-        android:background="#000000"
-        android:contentDescription="@string/paint"
-        android:onClick="setColor"
-
-        />
-
-    <ImageButton
-        android:id="@+id/color_FF0000"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="2dp"
-        android:background="#FF0000"
-        android:contentDescription="@string/paint"
-        android:onClick="setColor"
-        />
-
-    <ImageButton
-        android:id="@+id/color_006600"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="2dp"
-        android:background="#006600"
-        android:contentDescription="@string/paint"
-        android:onClick="setColor"
-       />
-    <ImageButton
-        android:id="@+id/color_FF660000"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="2dp"
-        android:background="#FF660000"
-        android:contentDescription="@string/paint"
-        android:onClick="setColor"
-        />
-
-    <ImageButton
-        android:id="@+id/color_FFFF00"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_margin="2dp"
-        android:background="#FFFF00"
-        android:contentDescription="@string/paint"
-        android:onClick="setColor"
-        />
-
-</LinearLayout>
     <com.drawsome.drawing.DrawView
         android:id="@+id/draw"
         android:layout_width="fill_parent"
@@ -112,4 +64,13 @@
         android:layout_marginTop="3dp"
         android:layout_weight="1"
         android:background="#FFFFFFFF" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose color"
+        android:id="@+id/button_colorPicker"
+        android:layout_gravity="center_horizontal"
+        android:onClick="pickColor" />
+
 </LinearLayout>

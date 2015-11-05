@@ -8,6 +8,10 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import android.os.Handler;
 
 import com.drawsome.drawing.DrawingDetailsBean;
@@ -45,6 +49,7 @@ import com.drawsome.drawing.MarshalHandler;
 
         public void run() {
             byte[] buffer = new byte[20000];  // buffer store for the stream
+            byte[] tempBuffer = new byte[20];
             int bytes; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
             while (true) {
@@ -53,13 +58,14 @@ import com.drawsome.drawing.MarshalHandler;
                    bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI activity
                     if(bytes > 0) {
-                       DrawingDetailsBean drawingDetailsBean = MarshalHandler.getMarshalHandlerInstance().unmarshal(buffer);
+                        Log.d("Received bytes ","" + bytes);
+                       ArrayList<DrawingDetailsBean> drawingList = MarshalHandler.getMarshalHandlerInstance().unmarshal(buffer,bytes);
                     //    BitmapDataObject bitmapDataObject = BitmapDataObject.deserialize(mmInStream);
                        // BitmapDataObject bitmapDataObject = buffer.re
                        /* DrawingDetailsBean bean = DrawingDetailsBean.deserialize(buffer);
                         Log.d("Receieved message ", bean.getPath() + "   " + bean.getPaint());
                        */
-                        Log.d("Received bean ",drawingDetailsBean.toString());
+                        Log.d("Received bean ",drawingList.toString());
                         Message msg = handler.obtainMessage();
 
                         /**
@@ -69,10 +75,14 @@ import com.drawsome.drawing.MarshalHandler;
                          */
                         Bundle b = new Bundle();
                 //        b.putParcelable("DrawingBean", bean);
-                        b.putParcelable("DrawingDetails",drawingDetailsBean);
-                        Log.d("snt data for display from connectedthread ",drawingDetailsBean.toString());
-                        msg.setData(b);
-                        handler.sendMessage(msg);
+                        int lengthOFList = drawingList.size();
+                        b.putInt("length",lengthOFList);
+
+                        b.putParcelableArrayList("DrawingDetails",drawingList);
+
+                       Log.d("snt data for display from connectedthread ", drawingList.toString());
+                       msg.setData(b);
+                       handler.sendMessage(msg);
                     }
 //                    mmInStream.reset();
 

@@ -8,14 +8,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.drawsome.R;
 import com.drawsome.bluetooth.ConnectedThread;
+import com.drawsome.bluetooth.ConnectedWriteThread;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,10 +33,15 @@ public class DrawView extends View {
     private Bitmap canvasBitmap;
     private Canvas drawCanvas;
     ConnectedThread connectedThread;
+    ConnectedWriteThread connectedWriteThread;
     DrawingDetailsBean drawingDetailsBean = null;
     List<Point> pointList = null;
-
+    private float brushSize, lastBrushSize;
     BluetoothSocket mmSocket;
+    //erase flag
+    private boolean erase=false;
+    final private Handler handler = new UIHandler();
+
 
     public DrawView(Context context) {
         super(context);
@@ -50,7 +60,8 @@ public class DrawView extends View {
     }
 
     private void init() {
-
+        brushSize = getResources().getInteger(R.integer.medium_size);
+        lastBrushSize = brushSize;
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setAntiAlias(true);
@@ -60,13 +71,15 @@ public class DrawView extends View {
         mPaint.setStrokeCap(Paint.Cap.ROUND);
         mPaint.setStrokeWidth(10);
         canvasPaint = new Paint();
-             canvasPaint.setFlags(Paint.DITHER_FLAG);
+        canvasPaint.setFlags(Paint.DITHER_FLAG);
         path = new Path();
     }
 
     public void startThread() {
         connectedThread = new ConnectedThread(mmSocket,handler);
         connectedThread.start();
+        connectedWriteThread = new ConnectedWriteThread(mmSocket);
+        connectedWriteThread.start();
     }
     public BluetoothSocket getMmSocket() {
         return mmSocket;
@@ -128,7 +141,9 @@ public class DrawView extends View {
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
 
             path.reset();
-            connectedThread.sendDrawingDetails(drawingDetailsBean);
+            connectedWriteThread.addToListToSend(drawingDetailsBean);
+            //connectedWriteThread.notify();
+            //connectedThread.sendDrawingDetails(drawingDetailsBean);
            // drawingDetailsBean.sendData();
         }
         return true;
@@ -155,35 +170,38 @@ public class DrawView extends View {
             /**
              * Retrieve the contents of the message and then update the UI
              */
-            DrawingDetailsBean bean = msg.getData().getParcelable("DrawingDetails");
-            if(bean != null) {
+            System.out.println("in ui handler");
+            List<DrawingDetailsBean> drawingList = msg.getData().getParcelableArrayList("DrawingDetails");
+           if(drawingList != null) {
+               System.out.println("drawing list not null");
+               for(DrawingDetailsBean bean: drawingList) {
+                   //canvasBitmap = bitmapDataObject.getCurrentImage();
+                   List<Point> pointList = bean.getPointList();
+                   Paint tempPaint = new Paint();
+                   tempPaint.setStyle(Paint.Style.STROKE);
+                   tempPaint.setStrokeJoin(Paint.Join.ROUND);
+                   tempPaint.setStrokeCap(Paint.Cap.ROUND);
+                   tempPaint.setDither(true);
+                   tempPaint.setAntiAlias(true);
 
-                //canvasBitmap = bitmapDataObject.getCurrentImage();
-                List<Point> pointList = bean.getPointList();
-                Paint tempPaint = new Paint();
-                tempPaint.setStyle(Paint.Style.STROKE);
-                tempPaint.setStrokeJoin(Paint.Join.ROUND);
-                tempPaint.setStrokeCap(Paint.Cap.ROUND);
-                tempPaint.setDither(true);
-                tempPaint.setAntiAlias(true);
+                   tempPaint.setColor(bean.getPaint());
+                   tempPaint.setStrokeWidth(bean.getStrokewidth());
+                   Point originalPoint = pointList.get(0);
+                   pointList.remove(0);
+                   Path tempPath = new Path();
+                   tempPath.moveTo(originalPoint.getX(),originalPoint.getY());
+                   for(Point point1 : pointList){
+                       tempPath.lineTo(point1.getX(),point1.getY());
 
-                tempPaint.setColor(bean.getPaint());
-                tempPaint.setStrokeWidth(bean.getStrokewidth());
-                Point originalPoint = pointList.get(0);
-                pointList.remove(0);
-                Path tempPath = new Path();
-                tempPath.moveTo(originalPoint.getX(),originalPoint.getY());
-                for(Point point1 : pointList){
-                    tempPath.lineTo(point1.getX(),point1.getY());
+                       Log.d("Point " , point1.getX() + "  " + point1.getY());
+                   }
+                   drawCanvas.drawPath(tempPath,tempPaint);
+                   invalidate();
 
-                    Log.d("Point " , point1.getX() + "  " + point1.getY());
-                }
-                drawCanvas.drawPath(tempPath,tempPaint);
-                invalidate();
+               }
+           }
 
-                //drawCanvas.setBitmap(canvasBitmap);
 
-            }
 /*
             DrawingDetailsBean bean = msg.getData().getParcelable("DrawingBean");
             Log.d(" in handler " , "received " + bean.getPath() + "  " + bean.getPaint());
@@ -192,6 +210,36 @@ public class DrawView extends View {
         }
 
     }
-    final private Handler handler = new UIHandler();
+
+
+    //set brush size
+    public void setBrushSize(float newSize){
+        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                newSize, getResources().getDisplayMetrics());
+        brushSize=pixelAmount;
+        mPaint.setStrokeWidth(brushSize);
+    }
+
+    //get and set last brush size
+    public void setLastBrushSize(float lastSize){
+        lastBrushSize=lastSize;
+    }
+    public float getLastBrushSize(){
+        return lastBrushSize;
+    }
+
+    //set erase true or false
+    public void setErase(boolean isErase){
+        erase=isErase;
+        if(erase) mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        else mPaint.setXfermode(null);
+    }
+
+    //start new drawing
+    public void startNew(){
+        drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        invalidate();
+    }
+
 
 }
