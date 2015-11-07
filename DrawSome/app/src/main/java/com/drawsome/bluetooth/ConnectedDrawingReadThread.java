@@ -18,6 +18,8 @@ import com.drawsome.drawing.DrawingDetailsBean;
 import com.drawsome.drawing.MarshalHandler;
 
 /**
+ * The thread which reads incoming data. On receiving data, it is sent to marshalHandler for parsing.
+ * If pasing is successful, the data is sent to UIHandler class for display.
  * Created by pooja on 10/11/2015.
  */
 

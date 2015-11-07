@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * This is a singleton class that handles marshaling and unmarshaling of drawing
+ * details sent via bluetooth.
  * Created by pooja on 10/15/2015.
  */
 public class MarshalHandler {
@@ -22,9 +24,17 @@ public class MarshalHandler {
     private MarshalHandler() {
 
     }
+ /*
+   static method, returns singleton instance.
+  */
     public static MarshalHandler getMarshalHandlerInstance() {
         return marshalHandler;
     }
+
+    /*
+    *   The method handles marshaling of data. It converts object DrawingDetailsBean to byte array.
+    *   @param drawingDetailsBean object to be marshaled.
+    */
     public byte[] marshal(DrawingDetailsBean drawingDetailsBean) {
 
         int lengthBean = drawingDetailsBean.getPointList().size();
@@ -52,14 +62,27 @@ public class MarshalHandler {
         return byteBuffer.array();
     }
 
+    /*
+    * This method handles unmarshaling of data. It converts given byte array into DrawingDetailsBean
+    * object. If the object is sent partially, it stores it into temporary buffer. Once complete object
+     * is received in nect chunk of data, the object is read.
+    * @param bytebuffer : bytebuffer array containing data
+    * @param length : length of data to be read
+    * @return List containing drawingDetailsBean objects.
+     */
     public static ArrayList<DrawingDetailsBean> unmarshal(byte[] byteBuffer,int length) {
         final int intSize = 4;
         int count =0;
         ArrayList<DrawingDetailsBean> drawingList = new ArrayList<DrawingDetailsBean>();
         Log.d("unmarshaler " ," bytebuffer length " + length);
+
+        // if the partial data is already in the previous cycle, then merge it with the data sent
+        // in this cycle.
         if(incompleteDataFlag == true) {
             if (tempBuffer != null) {
                 int bytesToRead;
+
+                // this cycle has the complete object. Merge it with previous data and unmarshal
                 if(lengthObject <= length + lengthDataStoredTempBuffer) {
                     bytesToRead = lengthObject - lengthDataStoredTempBuffer;
                     incompleteDataFlag = false;
@@ -82,7 +105,9 @@ public class MarshalHandler {
                     if(bean != null)
                        drawingList.add(bean);
                     tempBuffer.clear();
+
                 } else {
+                    // this cycle does not contain complete data. Store it for the next cycle.
                     Log.d("incomplete data received", "storing for next cycle ");
                     /*if(length > tempBuffer.remaining()){
                         ByteBuffer newBuffer = ByteBuffer.allocate(tempBuffer.capacity() + length
@@ -99,11 +124,14 @@ public class MarshalHandler {
             }
         }
 
+    // while buffer has data, unmarshal it.
      while(count < length) {
 
          lengthObject = ByteBuffer.wrap(byteBuffer, count, intSize).getInt();
          count = count + intSize;
           Log.d("unmasrshaler ", " lengthOfObject " + lengthObject);
+
+         // the complete object is received.
          if (lengthObject > length - count) {
              Log.d("incomplete data received", "storing for next cycle ");
              tempBuffer.clear();
@@ -114,7 +142,7 @@ public class MarshalHandler {
              return null;
 
          } else {
-
+           //incomplete object received. Store it in temporary buffer for next cycle and mark the flag.
              ByteBuffer buffer = ByteBuffer.wrap(byteBuffer, count, lengthObject);
              DrawingDetailsBean bean = readObject(buffer);
              if(bean != null)
@@ -126,8 +154,9 @@ public class MarshalHandler {
          return drawingList;
     }
 
-
-
+    /*
+    * method to read byetebuffer and stores data in DrawingDetailsBean object.
+     */
     private static DrawingDetailsBean  readObject (ByteBuffer buffer) {
         Log.d("unmarshaler "," remaining in readObject " + buffer.remaining() + " " + buffer.position());
      //   buffer.position(0);

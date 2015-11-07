@@ -1,5 +1,7 @@
 package com.drawsome.drawing;
 
+
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,6 +28,10 @@ import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 import java.util.UUID;
 
+/*
+ * The activity which handles UI events of drawing canvas and drawing tools.
+ * Created by pooja on 10/15/2015.
+ */
 public class DrawingActivity extends Activity implements View.OnClickListener{
 
     DrawView mView;
@@ -110,7 +116,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     }
 
 
-
+  /*
+  * Class handles UI events related to brush size.
+   */
     public class MyAdapterBrushSize extends ArrayAdapter<String> {
 
         String[] sObj;
@@ -163,6 +171,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    /*
+    * Class which handles UI events of eraser.
+     */
     public class MyAdapterEraserSize extends ArrayAdapter<String> {
 
         String[] sObj;
@@ -216,6 +227,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     }
 
 
+    /*
+    * Method which handles UI event of color selection.
+     */
     public void pickColor (View view) {
         HSVColorPickerDialog cpd = new HSVColorPickerDialog( this, 0xFF4488CC, new HSVColorPickerDialog.OnColorSelectedListener() {
             @Override

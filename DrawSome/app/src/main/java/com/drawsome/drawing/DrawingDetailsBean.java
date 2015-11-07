@@ -15,6 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The class that holds following drawing details:
+ * width of canvas
+ * Height of canvas
+ * Paint color
+ * BrushSize
+ * Eraser mode :on or Off
+ * List of (X,Y) cordinates.
  * Created by pooja on 10/10/2015.
  */
 public class DrawingDetailsBean implements Parcelable {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The thread which sends data via established bluetooth channel.
  * Created by pooja on 10/21/2015.
  */
 public class ConnectedDrawingWriteThread extends Thread {
@@ -40,6 +41,11 @@ public class ConnectedDrawingWriteThread extends Thread {
 
         listToSend = new ArrayList<DrawingDetailsBean>();
     }
+
+    /*
+    * Method that allows to add data to be sent in the list.
+      * The data must be an object of DrawingDetailsBean class.
+     */
     public  void addToListToSend(DrawingDetailsBean drawingDetailsBean) {
         synchronized(this) {
             Log.d("Inside addToListToSend ", "Obtained lock, adding drawing details to list");
@@ -65,6 +71,11 @@ public class ConnectedDrawingWriteThread extends Thread {
         }
     }
     }
+
+    /*
+    * The method sends object of DrawingDetailsBean to marshalHandler to marshal data in form of byte array.
+    * The byte array then is sent to the other device.
+     */
     public  void sendDrawingDetails(DrawingDetailsBean drawingDetailsBean) {
         try {
             mmOutStream.write(MarshalHandler.getMarshalHandlerInstance().marshal(drawingDetailsBean));

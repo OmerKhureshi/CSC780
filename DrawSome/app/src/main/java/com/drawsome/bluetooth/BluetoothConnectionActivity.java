@@ -26,6 +26,13 @@ import com.drawsome.drawing.ViewDrawingActivity;
 import java.io.IOException;
 import java.util.UUID;
 
+/*
+ * The class handles bluetooth connection. It has methods to turn bluetooth ON,
+ * make device visible to other devices, initialize connection and join the incoming connection.
+ * The connection is initialized by one device. When the other device accepts the connection, bluetooth
+ * channel is established between  them for exchange of data.
+ * Created by pooja on 09/08/2015.
+ */
 public class BluetoothConnectionActivity extends Activity {
 
     private BluetoothAdapter BA;
@@ -75,7 +82,11 @@ public class BluetoothConnectionActivity extends Activity {
         registerReceiver(mReceiver, intentFilter); // Don't forget to unregister during onDestroy
 
     }
-
+/*
+ * The method to handle initialization. It checks if the bluetooth is supported by the device first.
+ * If yes, then makes the device visible to other devices and puts it in listening mode to listen to
+ * incoming request. This is a blocking mode.
+  */
 
     public void initiate(View v) {
         if(BA == null) {
@@ -86,6 +97,12 @@ public class BluetoothConnectionActivity extends Activity {
         startActivityForResult(getVisible, SERVER_CONNECTION);
     }
 
+    /*
+    * The method makes the device visible to other devices first.
+     * It then starts discovering server sockets in listening mode. If it finds one,
+     *  then it sends connection request.
+     * to server socket
+     */
     public void join(View v) {
         if(BA == null) {
             Toast.makeText(getApplicationContext(),"Bluetooth not supported by device",Toast.LENGTH_LONG);
@@ -133,8 +150,13 @@ public class BluetoothConnectionActivity extends Activity {
         }
 
     }
-
-    public void handleServerConnection() {
+    /*
+    * The method is called when connection initialization request is made by the device.
+    * Puts the device in listening mode. For incoming connection requests, it checks for UUID string.
+    * If the string matches, it accepts the connection. The socket which can be used for communication is
+    * stored in SingletonBluetoothSocket singleton class for reference.
+    */
+    private void handleServerConnection() {
 
 
         /*AcceptThread acceptThread = new AcceptThread(this,BA);
@@ -183,13 +205,22 @@ public class BluetoothConnectionActivity extends Activity {
 
     }
 
-    public void clientConnect(View v) {
+    /*
+    * The method which handles client connection discovery process.
+     */
+    private void clientConnect(View v) {
 
         Boolean res = BA.startDiscovery();
         System.out.println("** Started discovery!!!! " + res);
 
     }
-    public void handleClientConnection(BluetoothDevice device) {
+
+    /*
+     * The method handles client connection. It sends connection request to server with UUID.
+     * It blocks till connection is successful or exception is thrown. On successful connection,
+     * it stores socket in singletonBluetoothSocket for reference.
+     */
+    private void handleClientConnection(BluetoothDevice device) {
 
         BluetoothSocket mmSocket = null;
         Log.d("Log :","Calling handleConnection");

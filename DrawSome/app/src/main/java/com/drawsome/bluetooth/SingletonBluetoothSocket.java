@@ -3,6 +3,7 @@ package com.drawsome.bluetooth;
 import android.bluetooth.BluetoothSocket;
 
 /**
+ * Singleton class which provides a central place to store bluetooth socket.
  * Created by pooja on 10/11/2015.
  */
 public class SingletonBluetoothSocket {

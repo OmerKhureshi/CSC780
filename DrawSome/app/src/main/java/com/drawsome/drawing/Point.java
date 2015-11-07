@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
+ * The class holds X,Y cordinates of canvas.
  * Created by pooja on 10/15/2015.
  */
 public class Point implements Parcelable {

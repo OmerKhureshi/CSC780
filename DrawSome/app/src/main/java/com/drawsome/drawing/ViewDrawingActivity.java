@@ -10,6 +10,11 @@ import com.drawsome.R;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
+/*
+ * The activity which handles UI events of receiver side. It replicates the drawing from sender
+ * side on drawing canvas.
+ * Created by pooja on 10/15/2015.
+ */
 public class ViewDrawingActivity extends Activity {
 
     DrawView mView;

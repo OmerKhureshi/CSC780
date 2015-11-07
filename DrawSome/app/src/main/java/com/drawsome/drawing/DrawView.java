@@ -25,7 +25,10 @@ import com.drawsome.bluetooth.ConnectedDrawingWriteThread;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+ * The class provides drawing canvas and implements drawing actions like change color, eraser etc.
+ *Created by pooja on 09/15/2015.
+ */
 
 public class DrawView extends View {
     private Path path;
@@ -62,6 +65,9 @@ public class DrawView extends View {
         this.setBackgroundColor(Color.WHITE);
     }
 
+    /*
+    *   Sets initial attributes of tools such as paint,brush. Called by the constructor of this object
+     */
     private void init() {
         brushSize = getResources().getInteger(R.integer.medium_size);
         lastBrushSize = brushSize;
@@ -78,6 +84,9 @@ public class DrawView extends View {
         path = new Path();
     }
 
+    /*
+    *  starts read and write threads for listening incoming data and sending data via bluetooth.
+     */
     public void startThread() {
         connectedDrawingReadThread = new ConnectedDrawingReadThread(mmSocket,handler);
         connectedDrawingReadThread.start();
@@ -103,9 +112,14 @@ public class DrawView extends View {
     public void setColor(int color) {
         mPaint.setColor(color);
     }
+
+    /*
+    * The method to handle actual drawing. The data is also sent to other device on ACTION_UP event.
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        // start drawing on action down event.
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             drawingDetailsBean = new DrawingDetailsBean();
             pointList = new ArrayList<Point>();
@@ -114,6 +128,7 @@ public class DrawView extends View {
             point.setY(event.getY());
             path.moveTo(event.getX(), event.getY());
             pointList.add(point);
+            // Create new object of drawingdetailsBean
             drawingDetailsBean.setHeight(canvasHeight);
             drawingDetailsBean.setWidth(canvasWidth);
             drawingDetailsBean.setPointList(pointList);
@@ -164,6 +179,9 @@ public class DrawView extends View {
 
     }
 
+    /*
+    * Private class which handles incoming data form other device and displays on canvas.
+     */
     private final class UIHandler extends Handler {
         public void handleMessage(Message msg) {
             /**
@@ -183,12 +201,14 @@ public class DrawView extends View {
                 if (drawingList != null) {
                     System.out.println("drawing list not null");
                     for (DrawingDetailsBean bean : drawingList) {
-
+                    // calculate aspect ratio of the two screens.
                         float aspectHeight = ((float)canvasHeight)/bean.getHeight();
                         float aspectWidth = ((float)canvasWidth)/bean.getWidth();
 
-                        Log.d("drawview aspect  " , aspectHeight + "   " + aspectWidth) ;
+                        Log.d("draw view aspect  " , aspectHeight + "   " + aspectWidth) ;
                         //canvasBitmap = bitmapDataObject.getCurrentImage();
+
+                        //initialie paint attributes.
                         List<Point> pointList = bean.getPointList();
                         Paint tempPaint = new Paint();
                         tempPaint.setStyle(Paint.Style.STROKE);
@@ -203,6 +223,8 @@ public class DrawView extends View {
                             tempPaint.setXfermode(null);
 
                         tempPaint.setStrokeWidth(bean.getStrokewidth());
+
+                        // draw points on canvas.
                         Point originalPoint = pointList.get(0);
                         pointList.remove(0);
                         Path tempPath = new Path();
