@@ -1,4 +1,4 @@
-package com.drawmate.drawmate.NFC;
+package com.drawsome.NFC;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
@@ -29,9 +29,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.drawmate.drawmate.R;
-import com.drawmate.drawmate.bluetooth.BluetoothConnectionActivity;
-import com.drawmate.drawmate.bluetooth.BluetoothHelper;
+import com.drawsome.BluetoothActivity.*;
+import com.drawsome.bluetooth.BluetoothConnectionActivity;
 
 
 public class NfcHelper
