@@ -2,7 +2,7 @@
 <project version="4">
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_dialog_brush_size.xml" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_drawing_main.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/difficulty_activity.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/easy_fragment.xml" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/layout/hard_fragment.xml" charset="UTF-8" />

@@ -1,3 +1,4 @@
+/*
 package com.drawsome.NFC;
 
 import android.app.Activity;
@@ -82,4 +83,4 @@ public class NfcHelper
         }
         return res;
     }
-}
+}*/

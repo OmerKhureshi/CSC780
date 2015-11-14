@@ -1,4 +1,4 @@
-package com.drawmate.drawmate.UiFlow.Difficulty;
+package com.drawsome.UiFlow.Difficulty;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -13,8 +13,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.drawmate.drawmate.Draw.DrawActivity;
-import com.drawmate.drawmate.R;
+import com.drawsome.R;
+import com.drawsome.UiFlow.Difficulty.*;
+import com.drawsome.drawing.DrawingActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class DifficultyActivity extends AppCompatActivity {
     }
 
     public void startDrawingActivity(View view) {
-        Intent intent = new Intent(this, DrawActivity.class);
+        Intent intent = new Intent(this, DrawingActivity.class);
         startActivity(intent);
     }
 }

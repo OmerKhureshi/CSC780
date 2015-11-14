@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
 import com.drawsome.drawing.DrawingActivity;
 import com.drawsome.drawing.ViewDrawingActivity;
 
@@ -200,8 +201,10 @@ public class BluetoothConnectionActivity extends Activity {
 
             }
         }
-        Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
-        startActivity(callDrawingActivity);
+        //Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
+        //startActivity(callDrawingActivity);
+        Intent callDifficultyActivity = new Intent(this,DifficultyActivity.class);
+
 
     }
 
