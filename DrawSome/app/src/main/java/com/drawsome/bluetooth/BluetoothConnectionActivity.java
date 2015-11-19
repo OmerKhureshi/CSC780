@@ -38,7 +38,7 @@ public class BluetoothConnectionActivity extends Activity {
 
     private BluetoothAdapter BA;
     Button joinButton,initiateButton, sendButton;
-   // ConnectedThread connectedThread;
+    // ConnectedThread connectedThread;
     private EditText editText;
     private TextView receivedMessageText;
     private BroadcastReceiver mReceiver;
@@ -77,7 +77,7 @@ public class BluetoothConnectionActivity extends Activity {
             Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnOn, 0);
         }
-            IntentFilter intentFilter = new IntentFilter();
+        IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothDevice.ACTION_FOUND);
         // Register the BroadcastReceiver
         registerReceiver(mReceiver, intentFilter); // Don't forget to unregister during onDestroy
@@ -201,9 +201,9 @@ public class BluetoothConnectionActivity extends Activity {
 
             }
         }
-        //Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
-        //startActivity(callDrawingActivity);
-        Intent callDifficultyActivity = new Intent(this,DifficultyActivity.class);
+
+        Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
+        startActivity(callDrawingActivity);
 
 
     }
@@ -279,8 +279,15 @@ public class BluetoothConnectionActivity extends Activity {
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         BA.cancelDiscovery();
         unregisterReceiver(mReceiver);
     }
+
+    public void callDrawingActivity(View view) {
+        Intent callDifficultyActivity = new Intent(this,DifficultyActivity.class);
+        startActivity(callDifficultyActivity);
+    }
+
 
 }
