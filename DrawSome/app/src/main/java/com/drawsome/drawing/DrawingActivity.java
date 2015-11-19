@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
@@ -50,7 +51,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
             actionBar.hide();
         }
         setContentView(R.layout.activity_drawing);
-        ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().interrupt();
+        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
+        //connectedThread.write("Ending thread");
+        connectedThread.interrupt();
         Log.d("Thread interrupted ", "" + ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
 
         mView = (DrawView) findViewById(R.id.draw);

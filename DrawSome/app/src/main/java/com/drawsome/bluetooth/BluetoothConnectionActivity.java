@@ -263,9 +263,6 @@ public class BluetoothConnectionActivity extends Activity {
 
         Intent callViewActivityIntent = new Intent(this,ViewDrawingActivity.class);
         startActivity(callViewActivityIntent);
-
-
-
     }
 
 

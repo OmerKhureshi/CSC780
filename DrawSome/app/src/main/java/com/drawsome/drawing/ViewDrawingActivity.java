@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.drawsome.R;
+import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
+import com.drawsome.database.WordsDBHelper;
 
 /*
  * The activity which handles UI events of receiver side. It replicates the drawing from sender
@@ -24,12 +27,14 @@ public class ViewDrawingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_drawing);
-        ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().interrupt();
-        Log.d("Thread interrupted ","" +ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
+        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
+        //connectedThread.write("Ending thread");
+        connectedThread.interrupt();
         mView = (DrawView) findViewById(R.id.viewDraw);
         mView.setEnabled(false);
         mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
+
     }
 
 

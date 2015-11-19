@@ -12,6 +12,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.drawsome.R;
+import com.drawsome.database.WordBean;
+import com.drawsome.database.WordsDBHelper;
+
+import java.util.List;
 
 public class HardFragment extends Fragment{
 
@@ -30,6 +34,14 @@ public class HardFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        WordsDBHelper wordsDBHelper = new WordsDBHelper(getContext());
+        List<WordBean> listWords = wordsDBHelper.getDifficultWords();
+        hardWords = new String[listWords.size()];
+        int index =0;
+        for (WordBean bean: listWords) {
+            hardWords[index] = bean.getWord();
+            index++;
+        }
         View rootView = inflater.inflate(R.layout.hard_fragment, container, false);
         listView = (ListView) rootView.findViewById(R.id.hard_fragment_list_view);;
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_list_text_view, hardWords);

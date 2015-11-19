@@ -59,8 +59,6 @@ public class ConnectedThread extends Thread{
                       e.printStackTrace();
                       break;
                   }
-
-
           }
 
     }
