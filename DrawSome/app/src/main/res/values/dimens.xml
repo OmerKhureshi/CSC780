@@ -15,4 +15,6 @@
 
     <integer name="large_size">30</integer>
 
+    <dimen name="guess_button">40dp</dimen>
+    <dimen name="guess_button_text">30dp</dimen>
 </resources>

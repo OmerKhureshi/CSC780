@@ -31,6 +31,7 @@
         <activity
             android:name=".drawing.ViewDrawingActivity"
             android:label="@string/title_activity_view_drawing" >
+
         </activity>
         <activity android:name=".UiFlow.Difficulty.DifficultyActivity"></activity>
     </application>

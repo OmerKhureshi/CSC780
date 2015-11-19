@@ -31,7 +31,6 @@ can,1
 hook,1
 school,2
 beaver,2
-french-fries,2
 beehive,2
 beach,2
 artist,3
