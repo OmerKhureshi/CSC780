@@ -45,8 +45,10 @@ public class DrawView extends View {
     private boolean erase=false;
     private int canvasHeight,canvasWidth;
 
+    private boolean touchable = true;
     final private Handler handler = new UIHandler();
     final private static  int SEND_LIMIT =10;
+
 
     public DrawView(Context context) {
         super(context);
@@ -118,6 +120,9 @@ public class DrawView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
+        if(touchable == false){
+                return super.onTouchEvent(event);
+        }
         // start drawing on action down event.
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             drawingDetailsBean = getDrawingObject(event.getX(),event.getY());
@@ -146,7 +151,6 @@ public class DrawView extends View {
     }
 
     private void setHandlerMessage(DrawingDetailsBean bean) {
-        System.out.println(" setHandlerMessage " + bean.getPointList().size());
         Message msg = handler.obtainMessage();
         Bundle b = new Bundle();
         b.putParcelable("DrawingDetails",bean);
@@ -216,6 +220,11 @@ public class DrawView extends View {
                     System.out.println("drawing list not null");
                     for (DrawingDetailsBean bean : drawingList) {
                     // calculate aspect ratio of the two screens.
+                        if(bean.getHeight() == -1 || bean.getWidth() ==-1) {
+                            drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+                            invalidate();
+                            return;
+                        }
                         float aspectHeight = ((float)canvasHeight)/bean.getHeight();
                         float aspectWidth = ((float)canvasWidth)/bean.getWidth();
 
@@ -286,8 +295,21 @@ public class DrawView extends View {
     //start new drawing
     public void startNew(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        DrawingDetailsBean bean = new DrawingDetailsBean();
+        bean.setHeight(-1);
+        bean.setWidth(-1);
+        bean.setPaint(-1);
+        bean.setStrokewidth(-1);
+        bean.setEraserFlag(false);
+        setHandlerMessage(bean);
         invalidate();
     }
 
+    public void setTouchable(boolean val){
+        this.touchable = val;
+    }
+    public boolean isTouchable(){
+        return touchable;
+    }
 
 }

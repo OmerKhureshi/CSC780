@@ -36,13 +36,17 @@ public class MarshalHandler {
     *   @param drawingDetailsBean object to be marshaled.
     */
     public byte[] marshal(DrawingDetailsBean drawingDetailsBean) {
+      int lengthBean = 0;
+        int lengthOfData =0;
+        if(drawingDetailsBean.getPointList() != null) {
 
-        int lengthBean = drawingDetailsBean.getPointList().size();
-      //  byte[] streamToSend = new byte[ lengthBean * 8 + 3 *4];
-        Log.d("marshal ","lenthBean " + lengthBean);
-        int lengthOfData = lengthBean * 8 + 5 * 4 + 1;
-        Log.d("marshal ","lengthOfData " + lengthOfData);
+            lengthBean = drawingDetailsBean.getPointList().size();
+            //  byte[] streamToSend = new byte[ lengthBean * 8 + 3 *4];
+            Log.d("marshal ", "lenthBean " + lengthBean);
 
+        }
+        lengthOfData = lengthBean * 8 + 5 * 4 + 1;
+        Log.d("marshal ", "lengthOfData " + lengthOfData);
         ByteBuffer byteBuffer = ByteBuffer.allocate(lengthOfData + 4);
         byteBuffer.putInt(lengthOfData);
         byteBuffer.putInt(drawingDetailsBean.getHeight());
@@ -55,10 +59,12 @@ public class MarshalHandler {
         else
             byteBuffer.put((byte)0);
         byteBuffer.putInt(lengthBean);
-         for(Point point : drawingDetailsBean.getPointList()) {
-             byteBuffer.putFloat(point.getX());
-             byteBuffer.putFloat(point.getY());
-         }
+        if(drawingDetailsBean.getPointList() != null) {
+            for (Point point : drawingDetailsBean.getPointList()) {
+                byteBuffer.putFloat(point.getX());
+                byteBuffer.putFloat(point.getY());
+            }
+        }
         return byteBuffer.array();
     }
 

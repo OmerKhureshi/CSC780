@@ -59,7 +59,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         mView = (DrawView) findViewById(R.id.draw);
         mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
-
+        mView.setTouchable(true);
         //sizes from dimensions
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);

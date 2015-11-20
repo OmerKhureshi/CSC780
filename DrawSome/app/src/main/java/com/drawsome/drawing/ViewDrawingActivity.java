@@ -139,7 +139,7 @@ public class ViewDrawingActivity extends Activity {
         mView.setClickable(false);
        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
-
+        mView.setTouchable(false);
     }
 
 
