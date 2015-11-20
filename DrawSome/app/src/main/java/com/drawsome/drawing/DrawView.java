@@ -39,7 +39,6 @@ public class DrawView extends View {
     ConnectedDrawingReadThread connectedDrawingReadThread;
     ConnectedDrawingWriteThread connectedDrawingWriteThread;
     DrawingDetailsBean drawingDetailsBean = null;
-    List<Point> pointList = null;
     private float brushSize, lastBrushSize;
     BluetoothSocket mmSocket;
     //erase flag
@@ -47,7 +46,7 @@ public class DrawView extends View {
     private int canvasHeight,canvasWidth;
 
     final private Handler handler = new UIHandler();
-
+    final private static  int SEND_LIMIT =10;
 
     public DrawView(Context context) {
         super(context);
@@ -74,7 +73,7 @@ public class DrawView extends View {
         mPaint = new Paint();
         mPaint.setDither(true);
         mPaint.setAntiAlias(true);
-        mPaint.setColor(0xFFFFFF00);
+        mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -121,20 +120,8 @@ public class DrawView extends View {
 
         // start drawing on action down event.
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            drawingDetailsBean = new DrawingDetailsBean();
-            pointList = new ArrayList<Point>();
-            Point point = new Point();
-            point.setX(event.getX());
-            point.setY(event.getY());
+            drawingDetailsBean = getDrawingObject(event.getX(),event.getY());
             path.moveTo(event.getX(), event.getY());
-            pointList.add(point);
-            // Create new object of drawingdetailsBean
-            drawingDetailsBean.setHeight(canvasHeight);
-            drawingDetailsBean.setWidth(canvasWidth);
-            drawingDetailsBean.setPointList(pointList);
-            drawingDetailsBean.setPaint(mPaint.getColor());
-            drawingDetailsBean.setStrokewidth(mPaint.getStrokeWidth());
-            drawingDetailsBean.setEraserFlag(erase);
             //  path.lineTo(event.getX(), event.getY());
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             path.lineTo(event.getX(), event.getY());
@@ -142,24 +129,49 @@ public class DrawView extends View {
             point.setX(event.getX());
             point.setY(event.getY());
             path.moveTo(event.getX(), event.getY());
-            pointList.add(point);
+            drawingDetailsBean.getPointList().add(point);
+            System.out.println("Point list " + drawingDetailsBean.getPointList().size());
+            if(drawingDetailsBean.getPointList().size() > SEND_LIMIT){
+                setHandlerMessage(drawingDetailsBean);
+                drawingDetailsBean = getDrawingObject(event.getX(),event.getY());
+            }
             drawCanvas.drawPath(path, mPaint);
             invalidate();
 
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
-
             path.reset();
-            Message msg = handler.obtainMessage();
-            Bundle b = new Bundle();
-            b.putParcelable("DrawingDetails",drawingDetailsBean);
-            b.putString("type","send");
-            msg.setData(b);
-            handler.sendMessage(msg);
-
+            setHandlerMessage(drawingDetailsBean);
         }
         return true;
     }
 
+    private void setHandlerMessage(DrawingDetailsBean bean) {
+        System.out.println(" setHandlerMessage " + bean.getPointList().size());
+        Message msg = handler.obtainMessage();
+        Bundle b = new Bundle();
+        b.putParcelable("DrawingDetails",bean);
+        b.putString("type","send");
+        msg.setData(b);
+        handler.sendMessage(msg);
+    }
+    private DrawingDetailsBean getDrawingObject(float x , float y){
+        DrawingDetailsBean bean = new DrawingDetailsBean();
+        List<Point> pointList = new ArrayList<Point>();
+        bean.setPointList(pointList);
+        Point point = new Point();
+        point.setX(x);
+        point.setY(y);
+
+        pointList.add(point);
+        // Create new object of drawingdetailsBean
+        bean.setHeight(canvasHeight);
+        bean.setWidth(canvasWidth);
+        bean.setPointList(pointList);
+        bean.setPaint(mPaint.getColor());
+        bean.setStrokewidth(mPaint.getStrokeWidth());
+        bean.setEraserFlag(erase);
+        return bean;
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -191,7 +203,9 @@ public class DrawView extends View {
 
             String type = msg.getData().getString("type");
             if (type!= null && type.equalsIgnoreCase("send")) {
-                connectedDrawingReadThread.sendDrawingDetails(drawingDetailsBean);
+                DrawingDetailsBean bean = msg.getData().getParcelable("DrawingDetails");
+                if (bean != null)
+                  connectedDrawingReadThread.sendDrawingDetails(bean);
 
             } else {
 

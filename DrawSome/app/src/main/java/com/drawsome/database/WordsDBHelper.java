@@ -38,7 +38,7 @@ public class WordsDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LEVEL = "LEVEL";
     private static final String COLUMN_HINT = "HINT";
     private static final String LIMIT = "5";
-
+    private static boolean isOnCreatedCalled = false;
 
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " (" + COLUMN_WORD + " TEXT PRIMARY KEY, "
@@ -52,12 +52,15 @@ public class WordsDBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         SQLiteDatabase db = getWritableDatabase();
         this.context = context;
+        System.out.println("context " + this.context);
+        if (isOnCreatedCalled == true)
+                 readFile();
     }
     public void onCreate(SQLiteDatabase db) {
         Log.d("dbhelper ","oncreate called!");
         db.execSQL(SQL_DELETE_ENTRIES);
         db.execSQL(SQL_CREATE_ENTRIES);
-        readFile();
+        isOnCreatedCalled = true;
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is
@@ -148,6 +151,8 @@ public class WordsDBHelper extends SQLiteOpenHelper {
 
         BufferedReader reader = null;
         try {
+            System.out.println("context from method" + context);
+            System.out.println("context 1" + context.getAssets());
             reader = new BufferedReader(
                     new InputStreamReader(context.getAssets().open("words.txt")));
 

@@ -33,16 +33,19 @@ public class EasyFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        WordsDBHelper wordsDBHelper = new WordsDBHelper(getContext());
+
+
+        View rootView = inflater.inflate(R.layout.easy_fragment, container, false);
+       System.out.println(getContext());
+       WordsDBHelper wordsDBHelper = new WordsDBHelper(getContext());
         List<WordBean> listWords = wordsDBHelper.getEasyWords();
         easyWords = new String[listWords.size()];
         int index =0;
         for (WordBean bean: listWords) {
-           easyWords[index] = bean.getWord();
+            easyWords[index] = bean.getWord();
             index++;
         }
 
-        View rootView = inflater.inflate(R.layout.easy_fragment, container, false);
         listView = (ListView) rootView.findViewById(R.id.easy_fragment_list_view);;
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), R.layout.simple_list_text_view, easyWords);
         listView.setAdapter(arrayAdapter);
