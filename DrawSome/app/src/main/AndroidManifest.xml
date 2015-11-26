@@ -39,6 +39,8 @@
 
         </activity>
         <activity android:name=".UiFlow.Difficulty.DifficultyActivity"></activity>
+
+        <activity android:name=".bluetooth.BluetoothManualActivity"></activity>
     </application>
 
 </manifest>

@@ -38,7 +38,7 @@ import java.util.UUID;
  * channel is established between  them for exchange of data.
  * Created by pooja on 09/08/2015.
  */
-public class BluetoothConnectionActivity extends Activity
+public class BluetoothManualActivity extends Activity
         implements NfcAdapter.CreateNdefMessageCallback, NfcAdapter.OnNdefPushCompleteCallback {
 
     private BluetoothAdapter BA;
@@ -60,8 +60,7 @@ public class BluetoothConnectionActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_bluetooth_connection);
-        setContentView(R.layout.activity_nfc);
+        setContentView(R.layout.activity_bluetooth_connection);
         editText = (EditText) findViewById(R.id.editText);
         receivedMessageText = (TextView)findViewById(R.id.receivedMessage);
 
@@ -314,7 +313,7 @@ public class BluetoothConnectionActivity extends Activity
     @Override
     public void onNdefPushComplete(NfcEvent event) {
         Log.v(this.getClass().toString(), "push complete!");
-        Toast.makeText(BluetoothConnectionActivity.this, "push complete", Toast.LENGTH_SHORT).show();
+        Toast.makeText(BluetoothManualActivity.this, "push complete", Toast.LENGTH_SHORT).show();
         initiate(null);
     }
 
@@ -334,10 +333,5 @@ public class BluetoothConnectionActivity extends Activity
      */
     public void processIntent(Intent intent) {
         join(null);
-    }
-
-    public void manualSetup(View v) {
-        Intent intent = new Intent(this, BluetoothManualActivity.class);
-        startActivity(intent);
     }
 }
