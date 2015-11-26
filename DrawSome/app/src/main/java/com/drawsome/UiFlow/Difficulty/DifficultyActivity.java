@@ -11,23 +11,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.drawsome.R;
 import com.drawsome.UiFlow.Difficulty.*;
+import com.drawsome.bluetooth.ConnectedThread;
+import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.drawing.DrawingActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DifficultyActivity extends AppCompatActivity {
+public class DifficultyActivity extends AppCompatActivity implements EasyFragment.OnWordSelectListener{
 
     android.support.v4.view.ViewPager viewPager;
     TabLayout tabLayout;
     RelativeLayout layout;
     TextView titleTextView;
+    String word;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,4 +125,15 @@ public class DifficultyActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DrawingActivity.class);
         startActivity(intent);
     }
+
+    public void onWordSelect(String wordSelected) {
+        word = wordSelected;
+        //sendWord(word);
+        Log.v(this.getClass().toString(), "word selected " + word);
+    }
+
+//    public void sendWord(String wordSelected) {
+//        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
+//        connectedThread.write(word);
+//    }
 }

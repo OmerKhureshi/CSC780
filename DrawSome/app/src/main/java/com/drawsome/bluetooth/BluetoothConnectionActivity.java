@@ -9,6 +9,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,7 +38,8 @@ import java.util.UUID;
  * channel is established between  them for exchange of data.
  * Created by pooja on 09/08/2015.
  */
-public class BluetoothConnectionActivity extends Activity {
+public class BluetoothConnectionActivity extends Activity
+        implements NfcAdapter.CreateNdefMessageCallback, NfcAdapter.OnNdefPushCompleteCallback {
 
     private BluetoothAdapter BA;
     Button joinButton,initiateButton, sendButton;
@@ -48,6 +53,8 @@ public class BluetoothConnectionActivity extends Activity {
     private static final int SERVER_CONNECTION = 2;
     private static final int CLIENT_CONNECTION = 3;
     private static final String UUID_STRING = "2511000-80cf0-11bd-b23e-10b96e4ef00d";
+    NfcAdapter nfcAdapter;
+    Boolean firstTime = true;
 
 
     @Override
@@ -56,6 +63,7 @@ public class BluetoothConnectionActivity extends Activity {
         setContentView(R.layout.activity_bluetooth_connection);
         editText = (EditText) findViewById(R.id.editText);
         receivedMessageText = (TextView)findViewById(R.id.receivedMessage);
+
 
         initiateButton = (Button) findViewById(R.id.initiateButton);
         sendButton = (Button) findViewById(R.id.sendButton);
@@ -82,6 +90,12 @@ public class BluetoothConnectionActivity extends Activity {
         // Register the BroadcastReceiver
         registerReceiver(mReceiver, intentFilter); // Don't forget to unregister during onDestroy
 
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        if (nfcAdapter == null) {
+            Log.v(this.getClass().toString(), "NFC is not available.");
+        } else {
+            nfcAdapter.setNdefPushMessageCallback(this,this);
+        }
     }
 /*
  * The method to handle initialization. It checks if the bluetooth is supported by the device first.
@@ -266,13 +280,12 @@ public class BluetoothConnectionActivity extends Activity {
     }
 
 
-    /*public void sendText(View v) {
+/*    public void sendText(View v) {
 
         EditText text = (EditText)findViewById(R.id.editText);
         connectedThread.write(text.getText().toString());
 
-    }
-*/
+    }*/
 
     @Override
     public void onDestroy() {
@@ -286,5 +299,39 @@ public class BluetoothConnectionActivity extends Activity {
         startActivity(callDifficultyActivity);
     }
 
+    @Override
+    public NdefMessage createNdefMessage(NfcEvent event) {
+        String msg = "DrawSome is Awesome!";
+        NdefMessage ndefMessage = new NdefMessage(
+                NdefRecord.createMime("application/com.drawsome.bluetooth", msg.getBytes())
+        );
+        Log.v(this.getClass().toString(), "push started!");
+        initiate(null);
+        return ndefMessage;
+    }
 
+    @Override
+    public void onNdefPushComplete(NfcEvent event) {
+        Log.v(this.getClass().toString(), "push complete!");
+        Toast.makeText(BluetoothConnectionActivity.this, "push complete", Toast.LENGTH_SHORT).show();
+        initiate(null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check to see that the Activity started due to an Android Beam
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction()) && firstTime == true) {
+            firstTime = false;
+            processIntent(getIntent());
+        }
+    }
+
+    /**
+     * Called when app is invoked from an nfc calL.
+     */
+    public void processIntent(Intent intent) {
+        join(null);
+    }
 }
