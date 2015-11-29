@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,7 +37,7 @@ import java.util.UUID;
 public class DrawingActivity extends Activity implements View.OnClickListener{
 
     DrawView mView;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn;
+    private ImageView currPaint, eraseBtn, newBtn, saveBtn, drawBtn, brushBtn;
     private Spinner brush;
     private int brushDefSize;
     private int eraserSize;
@@ -52,7 +53,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         }
         setContentView(R.layout.activity_drawing);
         ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
-        //connectedThread.write("Ending thread");
+        connectedThread.write("Ending thread");
         connectedThread.interrupt();
         Log.d("Thread interrupted ", "" + ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
 
@@ -68,32 +69,36 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
 
         //brush button
-        brush = (Spinner) findViewById(R.id.brushes_spinner);
-        MyAdapterBrushSize myAdapterBrushSize = new MyAdapterBrushSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
-        brush.setAdapter(myAdapterBrushSize);
+       // brush = (Spinner) findViewById(R.id.brushes_spinner);
+       // MyAdapterBrushSize myAdapterBrushSize = new MyAdapterBrushSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
+       // brush.setAdapter(myAdapterBrushSize);
 
         //eraser button
-        brush = (Spinner) findViewById(R.id.eraser_spinner);
-        MyAdapterEraserSize myAdapterEraserSize = new MyAdapterEraserSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
-        brush.setAdapter(myAdapterEraserSize);
+      //  brush = (Spinner) findViewById(R.id.eraser_spinner);
+      //  MyAdapterEraserSize myAdapterEraserSize = new MyAdapterEraserSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
+      //  brush.setAdapter(myAdapterEraserSize);
 
         //draw button
-        drawBtn = (ImageButton)findViewById(R.id.draw_btn);
+        drawBtn = (ImageView)findViewById(R.id.draw_btn);
         drawBtn.setOnClickListener(this);
+
+        //brush button
+        brushBtn = (ImageView)findViewById(R.id.draw_brush);
+        brushBtn.setOnClickListener(this);
 
         //set initial size
         mView.setBrushSize(mediumBrush);
 
         //erase button
-        eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
+        eraseBtn = (ImageView)findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
 
         //new button
-        newBtn = (ImageButton)findViewById(R.id.new_btn);
+        newBtn = (ImageView)findViewById(R.id.new_btn);
         newBtn.setOnClickListener(this);
 
         //save button
-        saveBtn = (ImageButton)findViewById(R.id.save_btn);
+        saveBtn = (ImageView)findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
     }
@@ -117,7 +122,6 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
      }
 
     }
-
 
   /*
   * Class handles UI events related to brush size.
