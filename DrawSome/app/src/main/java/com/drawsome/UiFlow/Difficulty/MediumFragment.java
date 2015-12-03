@@ -1,5 +1,6 @@
 package com.drawsome.UiFlow.Difficulty;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ public class MediumFragment extends Fragment{
 
     ListView listView;
     String[] mediumWords = {"phone", "laptop", "flower", "house", "hill", "banana"};
+    OnWordSelectListener onWordSelectListener;
 
     public MediumFragment() {
         super();
@@ -57,8 +59,18 @@ public class MediumFragment extends Fragment{
                     item.setBackgroundColor(Color.parseColor("#66bb6a"));
                 }
                 view.setBackgroundColor(Color.parseColor("#47824A"));
+                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString());
             }
         });
         return rootView;
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            onWordSelectListener = (OnWordSelectListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement OnWordSelectListener interface");
+        }
     }
 }

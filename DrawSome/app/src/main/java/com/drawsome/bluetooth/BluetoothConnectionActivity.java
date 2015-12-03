@@ -1,12 +1,14 @@
 package com.drawsome.bluetooth;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
@@ -25,8 +27,7 @@ import android.widget.Toast;
 
 import com.drawsome.R;
 import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
-import com.drawsome.drawing.DrawingActivity;
-import com.drawsome.drawing.ViewDrawingActivity;
+import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -44,12 +45,9 @@ public class BluetoothConnectionActivity extends Activity
     private BluetoothAdapter BA;
     Button joinButton,initiateButton, sendButton;
     // ConnectedThread connectedThread;
-    private EditText editText;
-    private TextView receivedMessageText;
     private BroadcastReceiver mReceiver;
     private BluetoothDevice pairedDevice;
     private static final int DISCOVER_DURATION = 300;
-    private static final int REQUEST_BLU = 1;
     private static final int SERVER_CONNECTION = 2;
     private static final int CLIENT_CONNECTION = 3;
     private static final String UUID_STRING = "2511000-80cf0-11bd-b23e-10b96e4ef00d";
@@ -62,9 +60,6 @@ public class BluetoothConnectionActivity extends Activity
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_bluetooth_connection);
         setContentView(R.layout.activity_nfc);
-        editText = (EditText) findViewById(R.id.editText);
-        receivedMessageText = (TextView)findViewById(R.id.receivedMessage);
-
 
         initiateButton = (Button) findViewById(R.id.initiateButton);
         sendButton = (Button) findViewById(R.id.sendButton);
@@ -76,7 +71,7 @@ public class BluetoothConnectionActivity extends Activity
                 System.out.println("received device info!!");
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     //bluetooth device found
-                    pairedDevice = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    pairedDevice =  intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     handleClientConnection(pairedDevice);
                 }
             }
@@ -161,8 +156,26 @@ public class BluetoothConnectionActivity extends Activity
             Boolean res = BA.startDiscovery();
             System.out.println("** Started discovery!!!! " + res);
         } else if(resultCode == RESULT_CANCELED) {
-            Toast.makeText(getApplicationContext(),"BLUETOOTH REQUEST CANCELLED",Toast.LENGTH_LONG).show();
-            finish();
+
+     //       Toast.makeText(getApplicationContext(),"BLUETOOTH REQUEST CANCELLED",Toast.LENGTH_LONG).show();
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("Bluetooth Request");
+            newDialog.setMessage("The application can not run without bluetooth. Are you sure do you want to quit?");
+            newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    finish();
+                }
+            });
+            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    dialog.cancel();
+                    if (!BA.isEnabled()) {
+                        Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(turnOn, 0);
+                    }
+                }
+            });
+            newDialog.show();
         }
 
     }
@@ -209,16 +222,19 @@ public class BluetoothConnectionActivity extends Activity
                     System.out.println("IOException " + io.getMessage());
                 }
                 SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(socket);
-                ConnectedThread connectedThread = new ConnectedThread();
+             /*   ConnectedThread connectedThread = new ConnectedThread();
                 ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
-                connectedThread.start();
+                connectedThread.start();*/
                 break;
 
             }
         }
 
-        Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
+        /*Intent callDrawingActivity = new Intent(this,DrawingActivity.class);
         startActivity(callDrawingActivity);
+        */
+        Intent callDifficultyActivity = new Intent(this,DifficultyActivity.class);
+        startActivity(callDifficultyActivity);
 
 
     }
@@ -258,9 +274,9 @@ public class BluetoothConnectionActivity extends Activity
             // until it succeeds or throws an exception
             mmSocket.connect();
             SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(mmSocket);
-            ConnectedThread connectedThread = new ConnectedThread();
+          /*  ConnectedThread connectedThread = new ConnectedThread();
             ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
-            connectedThread.start();
+            connectedThread.start();*/
         } catch (IOException connectException) {
             // Unable to connect; close the socket and get out
             connectException.printStackTrace();
@@ -276,8 +292,11 @@ public class BluetoothConnectionActivity extends Activity
         //manageConnectedSocket(mmSocket);
         Toast.makeText(this,"Connection successful",Toast.LENGTH_LONG).show();
 
-        Intent callViewActivityIntent = new Intent(this,ViewDrawingActivity.class);
-        startActivity(callViewActivityIntent);
+     /*   Intent callViewActivityIntent = new Intent(this,ViewDrawingActivity.class);
+        startActivity(callViewActivityIntent);*/
+
+        Intent callDifficultySecondActivity = new Intent(this,DifficultySecondUserActivity.class);
+        startActivity(callDifficultySecondActivity);
     }
 
 
@@ -323,7 +342,7 @@ public class BluetoothConnectionActivity extends Activity
         super.onResume();
 
         // Check to see that the Activity started due to an Android Beam
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction()) && firstTime == true) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(getIntent().getAction()) && firstTime) {
             firstTime = false;
             processIntent(getIntent());
         }

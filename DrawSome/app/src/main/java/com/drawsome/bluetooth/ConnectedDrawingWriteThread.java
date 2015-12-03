@@ -1,7 +1,6 @@
 package com.drawsome.bluetooth;
 
 import android.bluetooth.BluetoothSocket;
-import android.os.Handler;
 import android.util.Log;
 
 import com.drawsome.drawing.DrawingDetailsBean;
@@ -18,25 +17,20 @@ import java.util.List;
  * Created by pooja on 10/21/2015.
  */
 public class ConnectedDrawingWriteThread extends Thread {
-    private final BluetoothSocket mmSocket;
-    private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    private Integer lock =0;
 
+    private boolean flag = true;
     List<DrawingDetailsBean> listToSend = null;
 
     public ConnectedDrawingWriteThread(BluetoothSocket socket) {
-        mmSocket = socket;
-        InputStream tmpIn = null;
+
         OutputStream tmpOut = null;
         try {
-            tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        mmInStream = tmpIn;
         mmOutStream = tmpOut;
 
         listToSend = new ArrayList<DrawingDetailsBean>();
@@ -54,7 +48,7 @@ public class ConnectedDrawingWriteThread extends Thread {
         }
     }
     public void run() {
-        while (true) {
+        while (flag) {
             synchronized (this) {
             try {
                 Log.d("WritingThread:","Blocking call wait");
@@ -62,6 +56,9 @@ public class ConnectedDrawingWriteThread extends Thread {
         }catch(InterruptedException e){
             e.printStackTrace();
         }
+                if(!flag){
+                    break;
+                }
                 Log.d("WritingThread:","Notified, ready to send data");
             for (DrawingDetailsBean bean : listToSend) {
                 sendDrawingDetails(bean);
@@ -76,8 +73,9 @@ public class ConnectedDrawingWriteThread extends Thread {
     * The method sends object of DrawingDetailsBean to marshalHandler to marshal data in form of byte array.
     * The byte array then is sent to the other device.
      */
-    public  void sendDrawingDetails(DrawingDetailsBean drawingDetailsBean) {
+    private  void sendDrawingDetails(DrawingDetailsBean drawingDetailsBean) {
         try {
+
             mmOutStream.write(MarshalHandler.getMarshalHandlerInstance().marshal(drawingDetailsBean));
             Log.d("sending drawingDeails  ", drawingDetailsBean.toString());
             mmOutStream.flush();
@@ -86,4 +84,9 @@ public class ConnectedDrawingWriteThread extends Thread {
             e.printStackTrace();
         }
     }
+
+    public void setFlag(boolean flag){
+        this.flag = flag;
+    }
+
 }

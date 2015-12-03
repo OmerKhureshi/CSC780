@@ -86,9 +86,7 @@ public class EasyFragment extends Fragment {
         return rootView;
     }
 
-    public interface OnWordSelectListener {
-        public void onWordSelect(String wordSelected);
-    }
+
 
     @Override
     public void onAttach(Context context) {

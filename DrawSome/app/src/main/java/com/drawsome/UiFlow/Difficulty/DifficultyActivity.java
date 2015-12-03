@@ -1,12 +1,10 @@
 package com.drawsome.UiFlow.Difficulty;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -17,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.drawsome.R;
-import com.drawsome.UiFlow.Difficulty.*;
 import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.drawing.DrawingActivity;
@@ -25,13 +22,16 @@ import com.drawsome.drawing.DrawingActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DifficultyActivity extends AppCompatActivity implements EasyFragment.OnWordSelectListener{
+public class DifficultyActivity extends AppCompatActivity implements OnWordSelectListener{
 
     android.support.v4.view.ViewPager viewPager;
     TabLayout tabLayout;
     RelativeLayout layout;
     TextView titleTextView;
     String word;
+
+    private ConnectedThread connectedThread = new ConnectedThread();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,8 @@ public class DifficultyActivity extends AppCompatActivity implements EasyFragmen
 
         tabLayout = (TabLayout) findViewById(R.id.difficulty_activity_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-
+        ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
+        connectedThread.start();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -122,6 +123,7 @@ public class DifficultyActivity extends AppCompatActivity implements EasyFragmen
     }
 
     public void startDrawingActivity(View view) {
+        connectedThread.write(word);
         Intent intent = new Intent(this, DrawingActivity.class);
         startActivity(intent);
     }
@@ -130,6 +132,7 @@ public class DifficultyActivity extends AppCompatActivity implements EasyFragmen
         word = wordSelected;
         //sendWord(word);
         Log.v(this.getClass().toString(), "word selected " + word);
+
     }
 
 //    public void sendWord(String wordSelected) {

@@ -1,36 +1,29 @@
 package com.drawsome.drawing;
 
-import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
 import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
-import com.drawsome.database.WordsDBHelper;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -43,7 +36,7 @@ public class ViewDrawingActivity extends Activity {
 
     DrawView mView;
     List<Integer> letterPlace = new ArrayList<>();
-    final String word = "Laptop";
+    String word;
 
     List<Character> currentWord = new ArrayList<>();
     @Override
@@ -51,7 +44,14 @@ public class ViewDrawingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_drawing);
 
-
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            word = extras.getString("wordToGuess");
+        }
+        if(word == null){
+            Toast.makeText(getApplicationContext(),"Something went wrong,Please relaunch the application",Toast.LENGTH_SHORT);
+            finish();
+        }
         ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
         //connectedThread.write("Ending thread");
         if(connectedThread!= null)
@@ -97,7 +97,7 @@ public class ViewDrawingActivity extends Activity {
             DisplayMetrics displayMetrics = getApplicationContext().getResources().getDisplayMetrics();
             int pixelHeight = (int)(30 * displayMetrics.density + 0.5);
             int pixelWidth =(int)(30 * displayMetrics.density + 0.5);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(pixelHeight,pixelWidth);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(pixelWidth,pixelHeight);
             lp.setMargins(10, 10, 10, 10);
             button.setLayoutParams(lp);
             layout.addView(button);
@@ -202,6 +202,9 @@ public class ViewDrawingActivity extends Activity {
             System.out.println("current word" + current);
             if(word.equalsIgnoreCase(current.toString())) {
                 System.out.println("Bingo");
+                mView.sendWordGuessedMessage();
+
+
                 ImageButton img = (ImageButton)findViewById(R.id.checkbox);
               //  img.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
                 img.animate()
@@ -209,23 +212,36 @@ public class ViewDrawingActivity extends Activity {
                         .setDuration(1000)
                         .setListener(null);
 
-                //display the logo during 5 secondes,
-/*               new CountDownTimer(5000,1000){
-                    @Override
+               /* try {
+                    Thread.sleep(3000);
+                }  catch(InterruptedException ie){
+                    Log.d("interruptedException", ie.getMessage());
+                    ie.printStackTrace();
+                }*/
+                //display the change user screen during 6 seconds,
+               new CountDownTimer(6000,2000){
+                   boolean flagViewSet = false;
+                   @Override
                     public void onTick(long millisUntilFinished){
-                        setContentView(R.layout.change_user);
+                        System.out.println(millisUntilFinished);
+                        if(millisUntilFinished < 4500 && !flagViewSet) {
+                            flagViewSet = true;
+                            setContentView(R.layout.change_user);
+                        }
                     }
 
                     @Override
                     public void onFinish(){
                         //set the new Content of your activity
-
-                      System.out.println("loading activity");
-                     //   YourActivity.this.setContentView(R.layout.main);
+                        mView.stopThreads();
+                        System.out.println("loading activity");
+                        Intent intent = new Intent(getApplicationContext(), DifficultyActivity.class);
+                        startActivity(intent);
+                        //   YourActivity.this.setContentView(R.layout.main);
 
                     }
                 }.start();
-                Toast.makeText(getApplicationContext(),"BINGO!!",Toast.LENGTH_SHORT);*/
+
             }
         }
 

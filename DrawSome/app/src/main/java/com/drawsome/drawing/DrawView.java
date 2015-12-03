@@ -1,8 +1,10 @@
 
 package com.drawsome.drawing;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +13,7 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -18,8 +21,10 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
 import com.drawsome.bluetooth.ConnectedDrawingReadThread;
 import com.drawsome.bluetooth.ConnectedDrawingWriteThread;
 
@@ -195,6 +200,55 @@ public class DrawView extends View {
 
     }
 
+    public void stopThreads(){
+
+        connectedDrawingWriteThread.setFlag(false);
+        synchronized (connectedDrawingWriteThread) {
+            connectedDrawingWriteThread.notify();
+        }
+        connectedDrawingReadThread.setFlag(false);
+        Log.d("status of threads read ", connectedDrawingReadThread.isAlive() + " write " + connectedDrawingWriteThread.isAlive());
+    }
+    private void populateSuccessMessage(){
+        stopThreads();
+        Toast.makeText(getContext(), "Your drawing was guessed!!", Toast.LENGTH_LONG);
+        Log.d("drawview ","Your drawing was guessed!!");
+        Log.d("status of threads read ", connectedDrawingReadThread.isAlive() + " write " + connectedDrawingWriteThread.isAlive());
+        try {
+            Thread.sleep(2000);
+        }  catch(InterruptedException ie){
+            Log.d("interruptedException", ie.getMessage());
+            ie.printStackTrace();
+        }
+        ((Activity)getContext()).setContentView(R.layout.change_user_first);
+             new CountDownTimer(4000,1000){
+                    @Override
+                    public void onTick(long millisUntilFinished){
+
+                    }
+
+                    @Override
+                    public void onFinish(){
+                        //set the new Content of your activity
+
+                      System.out.println("loading activity");
+                        Intent intent = new Intent(getContext(), DifficultySecondUserActivity.class);
+                        ((Activity)getContext()).startActivity(intent);
+                     //   YourActivity.this.setContentView(R.layout.main);
+
+                    }
+                }.start();
+    }
+    public void sendWordGuessedMessage(){
+        Log.d("DrawView ","sending success message");
+        DrawingDetailsBean bean = new DrawingDetailsBean();
+        bean.setHeight(-2);
+        bean.setWidth(-2);
+        bean.setPaint(-2);
+        bean.setStrokewidth(-2);
+        bean.setEraserFlag(false);
+        setHandlerMessage(bean);
+    }
     /*
     * Private class which handles incoming data form other device and displays on canvas.
      */
@@ -208,8 +262,12 @@ public class DrawView extends View {
             String type = msg.getData().getString("type");
             if (type!= null && type.equalsIgnoreCase("send")) {
                 DrawingDetailsBean bean = msg.getData().getParcelable("DrawingDetails");
-                if (bean != null)
-                  connectedDrawingReadThread.sendDrawingDetails(bean);
+                if (bean != null) {
+                    synchronized (connectedDrawingWriteThread){
+                        connectedDrawingWriteThread.addToListToSend(bean);
+                    }
+                  //  connectedDrawingWriteThread.sendDrawingDetails(bean);
+                }
 
             } else {
 
@@ -223,6 +281,9 @@ public class DrawView extends View {
                         if(bean.getHeight() == -1 || bean.getWidth() ==-1) {
                             drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
                             invalidate();
+                            return;
+                        } else if(bean.getWidth() == -2 || bean.getHeight() == -2){
+                            populateSuccessMessage();
                             return;
                         }
                         float aspectHeight = ((float)canvasHeight)/bean.getHeight();

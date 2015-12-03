@@ -53,7 +53,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         }
         setContentView(R.layout.activity_drawing);
         ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
-        connectedThread.write("Ending thread");
+//        connectedThread.write("Ending thread");
+        if(connectedThread != null)
         connectedThread.interrupt();
         Log.d("Thread interrupted ", "" + ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
 

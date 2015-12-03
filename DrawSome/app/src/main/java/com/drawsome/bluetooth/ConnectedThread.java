@@ -1,11 +1,13 @@
 package com.drawsome.bluetooth;
 
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,7 +19,9 @@ public class ConnectedThread extends Thread{
     private final OutputStream mmOutStream;
     private List<String> data = new ArrayList<String>();
     private boolean flag = true;
+    Handler handler = null;
     public ConnectedThread() {
+
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
@@ -35,6 +39,9 @@ public class ConnectedThread extends Thread{
     }
 
 
+    public void setHandler (Handler handler){
+        this.handler = handler;
+    }
     @Override
     public void run() {
 
@@ -50,7 +57,15 @@ public class ConnectedThread extends Thread{
                       synchronized (this) {
                           if (bytes > 0) {
                               Log.d("Received bytes ", "" + bytes);
-                              data.add(new String(buffer));
+                          //    data.add(new String(buffer));
+                              if(handler != null) {
+                                  Message msg = handler.obtainMessage();
+
+                                  String word = new String(Arrays.copyOfRange(buffer, 0, bytes),"UTF-8");
+                                  msg.getData().putString("wordToBeGuessed", word);
+                                  Log.d("Received word ", word);
+                                  handler.dispatchMessage(msg);
+                              }
 //                    mmInStream.reset();
                           }
                       }
