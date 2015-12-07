@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.drawsome.R;
@@ -52,6 +53,10 @@ public class ViewDrawingActivity extends Activity {
             Toast.makeText(getApplicationContext(),"Something went wrong,Please relaunch the application",Toast.LENGTH_SHORT);
             finish();
         }
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarView);
+        progressBar.setProgress(10);
+
+
         ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
         //connectedThread.write("Ending thread");
         if(connectedThread!= null)

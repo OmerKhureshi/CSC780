@@ -20,7 +20,7 @@
     <string name="wait_message"> Please wait till your buddy chooses the word!!</string>
     <string name="turn_to_guess_message"> Your Buddy Guessed your drawing!!
         It\'s your turn to guess now!</string>
-    <string name="turn_to_draw_message"> BINGO!!  It\'s your turn to draw now! </string>
+    <string name="turn_to_draw_message"> It\'s your turn to draw now! </string>
 
     <string name="title_activity_turn_to_guess">TurnToGuessActivity</string>
 </resources>

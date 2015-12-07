@@ -3,12 +3,25 @@
     android:layout_height="match_parent"
     tools:context="com.drawsome.drawing.ViewDrawingActivity">
 
+    <RelativeLayout android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_weight="1">
+        <ProgressBar
+            android:id="@+id/progressBarView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/cicular_progress_bar"
+            android:max="100" />
+    </RelativeLayout>
     <com.drawsome.drawing.DrawView
         android:id="@+id/viewDraw"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:layout_weight="4"
+        android:layout_weight="6"
         android:background="#FFFFFFFF" />
 
     <RelativeLayout android:layout_height="wrap_content"

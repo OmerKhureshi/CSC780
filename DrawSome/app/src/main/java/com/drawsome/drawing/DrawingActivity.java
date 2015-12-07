@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -68,7 +69,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         largeBrush = getResources().getInteger(R.integer.large_size);
         brushDefSize = R.integer.medium_size;
 
-
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarDrawing);
+        progressBar.setProgress(10);
+     //   progressBar.onDrawForeground();
         //brush button
        // brush = (Spinner) findViewById(R.id.brushes_spinner);
        // MyAdapterBrushSize myAdapterBrushSize = new MyAdapterBrushSize(getApplicationContext(), R.layout.spinner_view_brush_size, new String[] {"50"});
