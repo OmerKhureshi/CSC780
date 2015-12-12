@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,8 @@ public class BluetoothConnectionActivity extends Activity
     NfcAdapter nfcAdapter;
     Boolean firstTime = true;
 
+    Button slide;
+    LinearLayout linLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +95,22 @@ public class BluetoothConnectionActivity extends Activity
         } else {
             nfcAdapter.setNdefPushMessageCallback(this,this);
         }
+
+        slide = (Button) findViewById(R.id.button9);
+        linLayout = (LinearLayout) findViewById(R.id.linLayout);
+        linLayout.setAlpha(0.0f);
+        linLayout.setTranslationY(linLayout.getHeight());
+
+        slide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linLayout.animate()
+                        .alpha(1.0f)
+                        .translationY(0);
+
+            }
+        });
+
     }
 /*
  * The method to handle initialization. It checks if the bluetooth is supported by the device first.
@@ -122,7 +141,6 @@ public class BluetoothConnectionActivity extends Activity
         getVisible.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVER_DURATION);
         startActivityForResult(getVisible, CLIENT_CONNECTION);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -35,4 +35,31 @@
         android:layout_marginTop="20dp"
         android:layout_below="@+id/nfc_text"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="slide up n down"
+        android:id="@+id/button9"
+        android:layout_below="@+id/setup_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="89dp" />
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal" android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:id="@+id/linLayout"
+        android:background="#FFFF00"
+        android:layout_below="@+id/button9">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is a sample text"
+            android:textColor="#000000"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
 </RelativeLayout>
