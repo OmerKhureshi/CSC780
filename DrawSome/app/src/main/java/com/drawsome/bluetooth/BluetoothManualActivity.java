@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.drawsome.R;
 import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
 import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
+import com.drawsome.drawing.ViewDrawingActivity;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -292,7 +293,7 @@ public class BluetoothManualActivity extends Activity
     }
 
     public void callDrawingActivity(View view) {
-        Intent callDifficultyActivity = new Intent(this,DifficultyActivity.class);
+        Intent callDifficultyActivity = new Intent(this,ViewDrawingActivity.class);
         startActivity(callDifficultyActivity);
     }
 

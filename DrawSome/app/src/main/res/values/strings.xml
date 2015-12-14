@@ -23,4 +23,7 @@
     <string name="turn_to_draw_message"> It\'s your turn to draw now! </string>
 
     <string name="title_activity_turn_to_guess">TurnToGuessActivity</string>
+    <string name="time_up"> Good try..Your time is up! </string>
+
+
 </resources>

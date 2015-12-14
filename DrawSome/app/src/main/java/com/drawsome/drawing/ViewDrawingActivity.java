@@ -1,5 +1,7 @@
 package com.drawsome.drawing;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -7,18 +9,22 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
 import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
+import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
 import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
@@ -37,7 +43,13 @@ public class ViewDrawingActivity extends Activity {
 
     DrawView mView;
     List<Integer> letterPlace = new ArrayList<>();
-    String word;
+    String word = "cat";
+
+    private final int waitTime = 3;
+    private int level =1;
+    private final int eastTimeToGuess =3;
+    private final int mediumTimeToGuess =4;
+    private final int hardTimeToGuess =5;
 
     List<Character> currentWord = new ArrayList<>();
     @Override
@@ -47,16 +59,20 @@ public class ViewDrawingActivity extends Activity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            word = extras.getString("wordToGuess");
+            String wordToGuess = extras.getString("wordToGuess");
+            String[] words = wordToGuess.split(";");
+            word = words[0];
+            if(words[1] != null){
+                level = Integer.parseInt(words[1]);
+            }
         }
+        System.out.println(" word " + word + " level " + level);
         if(word == null){
+           System.out.println(" word null!");
             Toast.makeText(getApplicationContext(),"Something went wrong,Please relaunch the application",Toast.LENGTH_SHORT);
             finish();
         }
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarView);
-        progressBar.setProgress(10);
-
-
+        setTimer();
         ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
         //connectedThread.write("Ending thread");
         if(connectedThread!= null)
@@ -252,5 +268,93 @@ public class ViewDrawingActivity extends Activity {
 
 
     }
+
+    private void setTimer(){
+
+
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarViewDrawing);
+        // progressBar.setProgress(10);
+        progressBar.setIndeterminate(false);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+        animation.setDuration(5000);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) { }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //do something when the countdown is complete
+                Log.d("Progressbar ", " Animation complete");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) { }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) { }
+        });
+        animation.start();
+
+
+        final TextView timerText = (TextView)findViewById(R.id.timer_text);
+
+        final int endMin;
+        final int endSec = 0;
+        System.out.println("level " + level);
+        if(level == 1){
+            endMin = eastTimeToGuess;
+        } else if(level == 2){
+            endMin = mediumTimeToGuess;
+        } else{
+            endMin = hardTimeToGuess;
+        }
+        System.out.println("endmin " + endMin);
+        new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
+            int min =endMin;
+            int sec =endSec;
+            boolean flag = false;
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                if (flag || (min == 0 && sec < 10)) {
+                 if(!flag){
+                     timerText.setTextColor(Color.parseColor("red"));
+                     timerText.setVisibility(View.INVISIBLE);
+                 } else {
+                     sec--;
+                     if (sec <= -1) {
+                         min--;
+                         sec = 59;
+                     }
+                     if (min == 0 && sec == 0) {
+                         setContentView(R.layout.time_is_up);
+                         Log.d("counter ", "finished");
+                     }
+                     timerText.setVisibility(View.VISIBLE);
+                     if (sec < 10) {
+                         timerText.setText(min + ":0" + sec);
+                     } else {
+                         timerText.setText(min + ":" + sec);
+                     }
+                 }
+                }
+                flag = !flag;
+            }
+
+            @Override
+            public void onFinish(){
+                Log.d("counter ","finished");
+                mView.stopThreads();
+                Intent intent = new Intent(getApplicationContext(), DifficultyActivity.class);
+                startActivity(intent);
+
+            }
+        }.start();
+
+
+
+    }
+
 
 }

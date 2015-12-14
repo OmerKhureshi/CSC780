@@ -65,6 +65,7 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
                         guess_word.setText(word);
                     }
                 });*/
+
                 Intent intent = new Intent(getApplicationContext(), ViewDrawingActivity.class);
                 intent.putExtra("wordToGuess",word);
                 startActivity(intent);

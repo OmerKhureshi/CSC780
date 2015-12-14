@@ -80,7 +80,7 @@ public class EasyFragment extends Fragment {
                     item.setBackgroundColor(Color.parseColor("#ef5350"));
                 }
                 view.setBackgroundColor(Color.parseColor("#BF4240"));
-                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString());
+                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString(),1);
             }
         });
         return rootView;

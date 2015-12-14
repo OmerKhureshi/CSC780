@@ -59,7 +59,7 @@ public class MediumFragment extends Fragment{
                     item.setBackgroundColor(Color.parseColor("#66bb6a"));
                 }
                 view.setBackgroundColor(Color.parseColor("#47824A"));
-                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString());
+                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString(),2);
             }
         });
         return rootView;

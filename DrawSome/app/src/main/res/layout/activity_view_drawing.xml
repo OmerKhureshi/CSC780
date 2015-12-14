@@ -3,27 +3,47 @@
     android:layout_height="match_parent"
     tools:context="com.drawsome.drawing.ViewDrawingActivity">
 
-    <RelativeLayout android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_weight="1">
-        <ProgressBar
-            android:id="@+id/progressBarView"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:indeterminate="false"
-            android:progressDrawable="@drawable/cicular_progress_bar"
-            android:max="100" />
-    </RelativeLayout>
+
     <com.drawsome.drawing.DrawView
         android:id="@+id/viewDraw"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:layout_weight="6"
+        android:layout_height="wrap_content"
         android:background="#FFFFFFFF" />
 
+
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:background="#DDA0DD"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/sand_timer"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+        <TextView
+            android:id="@+id/timer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3:00"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+        <ProgressBar
+            android:id="@+id/progressBarViewDrawing"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:max="100" />
+
+    </LinearLayout>
     <RelativeLayout android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:layout_weight="2"

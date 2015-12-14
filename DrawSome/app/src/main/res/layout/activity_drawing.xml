@@ -9,8 +9,26 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
     <!-- Top Buttons -->
-    <RelativeLayout android:layout_height="wrap_content"
-        android:layout_width="wrap_content" >
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:background="#007DD6"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/sand_timer"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+        <TextView
+            android:id="@+id/time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3:00"
+            android:textSize="20dp"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
     <ProgressBar
         android:id="@+id/progressBarDrawing"
         android:layout_width="50dp"
@@ -18,25 +36,25 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:indeterminate="false"
-        android:progressDrawable="@drawable/cicular_progress_bar"
+        android:progressDrawable="@drawable/circular_progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:max="100" />
-    </RelativeLayout>
+
+    </LinearLayout>
     <com.drawsome.drawing.DrawView
         android:id="@+id/draw"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="3dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="3dp"
+
         android:layout_weight="1"
         android:background="#FFFFFFFF" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:background="#007DD6">
 
         <!--<Spinner-->
             <!--android:id="@+id/brushes_spinner"-->

@@ -2,19 +2,25 @@ package com.drawsome.drawing;
 
 
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
+import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
+import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
 import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
@@ -43,7 +51,12 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private int brushDefSize;
     private int eraserSize;
     private float smallBrush, mediumBrush, largeBrush;
-
+    private final int waitTime = 3;
+    private int level =1;
+    private final int eastTimeToGuess =3;
+    private final int mediumTimeToGuess =4;
+    private final int hardTimeToGuess =5;
+    private String word;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +72,15 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         connectedThread.interrupt();
         Log.d("Thread interrupted ", "" + ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String wordToGuess = extras.getString("wordToGuess");
+            String[] words = wordToGuess.split(";");
+            word = words[0];
+            if(words[1] != null){
+                level = Integer.parseInt(words[1]);
+            }
+        }
         mView = (DrawView) findViewById(R.id.draw);
         mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
@@ -69,8 +91,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         largeBrush = getResources().getInteger(R.integer.large_size);
         brushDefSize = R.integer.medium_size;
 
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarDrawing);
-        progressBar.setProgress(10);
+        setTimer();
+
      //   progressBar.onDrawForeground();
         //brush button
        // brush = (Spinner) findViewById(R.id.brushes_spinner);
@@ -124,6 +146,88 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
          mView.setColor(colorDrawable.getColor());
      }
+
+    }
+    private void setTimer(){
+
+
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarDrawing);
+        // progressBar.setProgress(10);
+        progressBar.setIndeterminate(false);
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+        animation.setDuration(5000);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) { }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //do something when the countdown is complete
+                Log.d("Progressbar "," Animation complete");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) { }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) { }
+        });
+        animation.start();
+
+
+        final TextView timerText = (TextView)findViewById(R.id.time_text);
+        final int endMin;
+        final int endSec = 0;
+        if(level == 1){
+            endMin = eastTimeToGuess;
+        } else if(level == 2){
+            endMin = mediumTimeToGuess;
+        } else{
+            endMin = hardTimeToGuess;
+        }
+        new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
+            int min =endMin;
+            int sec =endSec;
+            boolean flag = false;
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                if (flag || (min == 0 && sec < 10)) {
+                    if(!flag){
+                        timerText.setTextColor(Color.parseColor("red"));
+                        timerText.setVisibility(View.INVISIBLE);
+                    } else {
+                        sec--;
+                        if (sec <= -1) {
+                            min--;
+                            sec = 59;
+                        }
+                        if (min == 0 && sec == 0) {
+                            setContentView(R.layout.time_is_up);
+                            Log.d("counter ", "finished");
+                        }
+                        timerText.setVisibility(View.VISIBLE);
+                        if (sec < 10) {
+                            timerText.setText(min + ":0" + sec);
+                        } else {
+                            timerText.setText(min + ":" + sec);
+                        }
+                    }
+                }
+                flag = !flag;
+            }
+            @Override
+            public void onFinish(){
+                Log.d("counter ","finished");
+                mView.stopThreads();
+                Intent intent = new Intent(getApplicationContext(), DifficultySecondUserActivity.class);
+                startActivity(intent);
+
+            }
+        }.start();
+
+
 
     }
 

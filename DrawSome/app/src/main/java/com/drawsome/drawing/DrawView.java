@@ -193,7 +193,7 @@ public class DrawView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         Log.d("received height", "   " + h + "   " + w);
-        canvasHeight = h;
+        canvasHeight = h ;
         canvasWidth = w;
         canvasBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         drawCanvas = new Canvas(canvasBitmap);

@@ -58,7 +58,7 @@ public class HardFragment extends Fragment{
                     item.setBackgroundColor(Color.parseColor("#9575cd"));
                 }
                 view.setBackgroundColor(Color.parseColor("#68518F"));
-                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString());
+                onWordSelectListener.onWordSelect(((TextView)listView.getChildAt(position)).getText().toString(),3);
             }
         });
         return rootView;

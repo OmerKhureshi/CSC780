@@ -29,7 +29,7 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
     RelativeLayout layout;
     TextView titleTextView;
     String word;
-
+    int level;
     private ConnectedThread connectedThread = new ConnectedThread();
 
 
@@ -123,13 +123,17 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
     }
 
     public void startDrawingActivity(View view) {
-        connectedThread.write(word);
+        connectedThread.write(word+";"+level);
+
         Intent intent = new Intent(this, DrawingActivity.class);
+        intent.putExtra("wordToGuess",word+";"+level);
         startActivity(intent);
     }
 
-    public void onWordSelect(String wordSelected) {
+    @Override
+    public void onWordSelect(String wordSelected,int levelSelected) {
         word = wordSelected;
+        level = levelSelected;
         //sendWord(word);
         Log.v(this.getClass().toString(), "word selected " + word);
 
