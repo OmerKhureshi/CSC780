@@ -8,6 +8,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,6 +58,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private final int mediumTimeToGuess =4;
     private final int hardTimeToGuess =5;
     private String word;
+    CountDownTimer timer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,11 +68,6 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
             actionBar.hide();
         }
         setContentView(R.layout.activity_drawing);
-        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
-//        connectedThread.write("Ending thread");
-        if(connectedThread != null)
-        connectedThread.interrupt();
-        Log.d("Thread interrupted ", "" + ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread().isInterrupted());
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -186,7 +183,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         } else{
             endMin = hardTimeToGuess;
         }
-        new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
+        timer = new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
             int min =endMin;
             int sec =endSec;
             boolean flag = false;
@@ -520,6 +517,48 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    @Override
+    public void onBackPressed(){
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setMessage("Give up?");
+        newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                mView.sendGiveUpMessage();
+                timer.cancel();
+                new CountDownTimer(4000,1000){
+                    boolean flagViewSet = false;
+                    @Override
+                    public void onTick(long millisUntilFinished){
+                        setContentView(R.layout.give_up);
+                    }
+
+                    @Override
+                    public void onFinish(){
+                        //set the new Content of your activity
+                        mView.stopThreads();
+                        finish();
+                        //   YourActivity.this.setContentView(R.layout.main);
+
+                    }
+                }.start();
 
 
+
+            }
+        });
+        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.cancel();
+
+            }
+        });
+        newDialog.show();
+
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        timer.cancel();
+    }
 }

@@ -26,12 +26,17 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_difficulty_second_user);
-        connectedThread = new ConnectedThread();
-        connectedThread.setHandler(difficultyHandler);
-        ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
-        connectedThread.start();
+
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        connectedThread = new ConnectedThread();
+        connectedThread.setHandler(difficultyHandler);
+       // ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
+        connectedThread.start();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,6 +60,15 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected  void onStop(){
+        super.onStop();
+     // connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
+        //connectedThread.write("Ending thread");
+        if(connectedThread!= null)
+            connectedThread.interrupt();
+        connectedThread = null;
+    }
     private final class UIHandler extends Handler {
         public void handleMessage(Message msg) {
            word =  msg.getData().getString("wordToBeGuessed");
@@ -72,4 +86,5 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
             }
         }
     }
+
 }

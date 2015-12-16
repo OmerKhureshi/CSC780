@@ -30,7 +30,7 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
     TextView titleTextView;
     String word;
     int level;
-    private ConnectedThread connectedThread = new ConnectedThread();
+    private ConnectedThread connectedThread;
 
 
     @Override
@@ -81,10 +81,16 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
 
         tabLayout = (TabLayout) findViewById(R.id.difficulty_activity_tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-        ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
-        connectedThread.start();
+      //  ConnectedThreadSingleton.getConnectedThreadInstance().setConnectedThread(connectedThread);
+
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        connectedThread = new ConnectedThread();
+        connectedThread.start();
+    }
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new EasyFragment(), "Easy");
@@ -139,6 +145,15 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
 
     }
 
+    @Override
+    protected void onStop(){
+
+        super.onStop();
+        if(connectedThread != null)
+            connectedThread.interrupt();
+        Log.d("Thread interrupted ", "" + connectedThread.isInterrupted());
+        connectedThread = null;
+    }
 //    public void sendWord(String wordSelected) {
 //        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
 //        connectedThread.write(word);

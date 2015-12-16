@@ -1,12 +1,14 @@
 package com.drawsome.bluetooth;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NdefMessage;
@@ -153,8 +155,24 @@ public class BluetoothManualActivity extends Activity
             Boolean res = BA.startDiscovery();
             System.out.println("** Started discovery!!!! " + res);
         } else if(resultCode == RESULT_CANCELED) {
-            Toast.makeText(getApplicationContext(),"BLUETOOTH REQUEST CANCELLED",Toast.LENGTH_LONG).show();
-            finish();
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            newDialog.setTitle("Bluetooth Request");
+            newDialog.setMessage("The application can not run without bluetooth. Are you sure do you want to quit?");
+            newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which){
+                    finish();
+                }
+            });
+            newDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    if (!BA.isEnabled()) {
+                        Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        startActivityForResult(turnOn, 0);
+                    }
+                }
+            });
+            newDialog.show();
         }
 
     }

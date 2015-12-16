@@ -249,6 +249,17 @@ public class DrawView extends View {
         bean.setEraserFlag(false);
         setHandlerMessage(bean);
     }
+
+    public void sendGiveUpMessage(){
+        Log.d("DrawView ","sending give up message");
+        DrawingDetailsBean bean = new DrawingDetailsBean();
+        bean.setHeight(-3);
+        bean.setWidth(-3);
+        bean.setPaint(-3);
+        bean.setStrokewidth(-3);
+        bean.setEraserFlag(false);
+        setHandlerMessage(bean);
+    }
     /*
     * Private class which handles incoming data form other device and displays on canvas.
      */
@@ -284,6 +295,25 @@ public class DrawView extends View {
                             return;
                         } else if(bean.getWidth() == -2 || bean.getHeight() == -2){
                             populateSuccessMessage();
+                            return;
+                        } else if(bean.getWidth() == -3 || bean.getHeight() == -3){
+                            Log.d("Drawview","Second user exit");
+                            stopThreads();
+                            Toast.makeText(getContext(),"Your buddy gave up!",Toast.LENGTH_LONG);
+                            new CountDownTimer(4000,1000){
+
+                                @Override
+                                public void onTick(long millisUntilFinished){
+                                    ((Activity)getContext()).setContentView(R.layout.give_up);
+                                }
+
+                                @Override
+                                public void onFinish(){
+                                    ((Activity)getContext()).finish();
+
+                                }
+                            }.start();
+
                             return;
                         }
                         float aspectHeight = ((float)canvasHeight)/bean.getHeight();

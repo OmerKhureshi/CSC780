@@ -3,9 +3,12 @@ package com.drawsome.drawing;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.DisplayMetrics;
@@ -51,6 +54,7 @@ public class ViewDrawingActivity extends Activity {
     private final int mediumTimeToGuess =4;
     private final int hardTimeToGuess =5;
 
+    CountDownTimer timer;
     List<Character> currentWord = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +77,6 @@ public class ViewDrawingActivity extends Activity {
             finish();
         }
         setTimer();
-        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
-        //connectedThread.write("Ending thread");
-        if(connectedThread!= null)
-         connectedThread.interrupt();
 
         // get a word and add characters to the list.
         List<Character> shuffledList = new ArrayList<>();
@@ -225,7 +225,6 @@ public class ViewDrawingActivity extends Activity {
                 System.out.println("Bingo");
                 mView.sendWordGuessedMessage();
 
-
                 ImageButton img = (ImageButton)findViewById(R.id.checkbox);
               //  img.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
                 img.animate()
@@ -240,7 +239,7 @@ public class ViewDrawingActivity extends Activity {
                     ie.printStackTrace();
                 }*/
                 //display the change user screen during 6 seconds,
-               new CountDownTimer(6000,2000){
+              new CountDownTimer(6000,2000){
                    boolean flagViewSet = false;
                    @Override
                     public void onTick(long millisUntilFinished){
@@ -310,7 +309,7 @@ public class ViewDrawingActivity extends Activity {
             endMin = hardTimeToGuess;
         }
         System.out.println("endmin " + endMin);
-        new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
+        timer = new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
             int min =endMin;
             int sec =endSec;
             boolean flag = false;
@@ -329,6 +328,17 @@ public class ViewDrawingActivity extends Activity {
                      }
                      if (min == 0 && sec == 0) {
                          setContentView(R.layout.time_is_up);
+                        /* final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.rain_thunders);
+                         mediaPlayer
+                                 .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                                              @Override
+                                                              public void onCompletion(MediaPlayer mp) {
+                                                                  mediaPlayer.release();
+
+                                                              }
+                                                          });
+                         mediaPlayer.start();*/
+
                          Log.d("counter ", "finished");
                      }
                      timerText.setVisibility(View.VISIBLE);
@@ -356,5 +366,45 @@ public class ViewDrawingActivity extends Activity {
 
     }
 
+    @Override
+    public void onBackPressed(){
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setMessage("Give up?");
+        newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                mView.sendGiveUpMessage();
+                new CountDownTimer(4000,1000){
+                    boolean flagViewSet = false;
+                    @Override
+                    public void onTick(long millisUntilFinished){
+                            setContentView(R.layout.give_up);
+                    }
 
+                    @Override
+                    public void onFinish(){
+                        //set the new Content of your activity
+                        mView.stopThreads();
+                        finish();
+                        //   YourActivity.this.setContentView(R.layout.main);
+
+                    }
+                }.start();
+
+
+            }
+        });
+        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.cancel();
+
+            }
+        });
+        newDialog.show();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        timer.cancel();
+    }
 }
