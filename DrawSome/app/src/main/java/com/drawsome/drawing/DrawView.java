@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -17,6 +18,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -54,7 +56,11 @@ public class DrawView extends View {
     final private Handler handler = new UIHandler();
     final private static  int SEND_LIMIT =10;
 
+    final private int NEW = -1;
+    final private int SUCCESS = -2;
+    final private int GIVE_UP = -3;
 
+    final float density = getContext().getResources().getDisplayMetrics().density;
     public DrawView(Context context) {
         super(context);
         init();
@@ -136,11 +142,14 @@ public class DrawView extends View {
         } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
             path.lineTo(event.getX(), event.getY());
             Point point = new Point();
-            point.setX(event.getX());
-            point.setY(event.getY());
+            //convert into device independent pixel
+            point.setX(event.getX() * 160/density);
+            point.setY(event.getY() * 160/density);
             path.moveTo(event.getX(), event.getY());
             drawingDetailsBean.getPointList().add(point);
             System.out.println("Point list " + drawingDetailsBean.getPointList().size());
+
+            //send the details to second device
             if(drawingDetailsBean.getPointList().size() > SEND_LIMIT){
                 setHandlerMessage(drawingDetailsBean);
                 drawingDetailsBean = getDrawingObject(event.getX(),event.getY());
@@ -155,6 +164,9 @@ public class DrawView extends View {
         return true;
     }
 
+   /*
+    * send message to handler
+    */
     private void setHandlerMessage(DrawingDetailsBean bean) {
         Message msg = handler.obtainMessage();
         Bundle b = new Bundle();
@@ -163,13 +175,17 @@ public class DrawView extends View {
         msg.setData(b);
         handler.sendMessage(msg);
     }
+
+    /*
+    *  create a new drawing object
+    */
     private DrawingDetailsBean getDrawingObject(float x , float y){
         DrawingDetailsBean bean = new DrawingDetailsBean();
         List<Point> pointList = new ArrayList<Point>();
         bean.setPointList(pointList);
         Point point = new Point();
-        point.setX(x);
-        point.setY(y);
+        point.setX(160 * x/density);
+        point.setY(160 * y/density);
 
         pointList.add(point);
         // Create new object of drawingdetailsBean
@@ -209,6 +225,8 @@ public class DrawView extends View {
         connectedDrawingReadThread.setFlag(false);
         Log.d("status of threads read ", connectedDrawingReadThread.isAlive() + " write " + connectedDrawingWriteThread.isAlive());
     }
+
+
     private void populateSuccessMessage(){
         stopThreads();
         Toast.makeText(getContext(), "Your drawing was guessed!!", Toast.LENGTH_LONG);
@@ -220,6 +238,8 @@ public class DrawView extends View {
             Log.d("interruptedException", ie.getMessage());
             ie.printStackTrace();
         }
+
+        //display success message and start new activity
         ((Activity)getContext()).setContentView(R.layout.change_user_first);
              new CountDownTimer(4000,1000){
                     @Override
@@ -232,6 +252,7 @@ public class DrawView extends View {
                         //set the new Content of your activity
 
                       System.out.println("loading activity");
+                        ((Activity)getContext()).finish();
                         Intent intent = new Intent(getContext(), DifficultySecondUserActivity.class);
                         ((Activity)getContext()).startActivity(intent);
                      //   YourActivity.this.setContentView(R.layout.main);
@@ -239,13 +260,15 @@ public class DrawView extends View {
                     }
                 }.start();
     }
+
+
     public void sendWordGuessedMessage(){
         Log.d("DrawView ","sending success message");
         DrawingDetailsBean bean = new DrawingDetailsBean();
-        bean.setHeight(-2);
-        bean.setWidth(-2);
-        bean.setPaint(-2);
-        bean.setStrokewidth(-2);
+        bean.setHeight(SUCCESS);
+        bean.setWidth(SUCCESS);
+        bean.setPaint(SUCCESS);
+        bean.setStrokewidth(SUCCESS);
         bean.setEraserFlag(false);
         setHandlerMessage(bean);
     }
@@ -253,10 +276,10 @@ public class DrawView extends View {
     public void sendGiveUpMessage(){
         Log.d("DrawView ","sending give up message");
         DrawingDetailsBean bean = new DrawingDetailsBean();
-        bean.setHeight(-3);
-        bean.setWidth(-3);
-        bean.setPaint(-3);
-        bean.setStrokewidth(-3);
+        bean.setHeight(GIVE_UP);
+        bean.setWidth(GIVE_UP);
+        bean.setPaint(GIVE_UP);
+        bean.setStrokewidth(GIVE_UP);
         bean.setEraserFlag(false);
         setHandlerMessage(bean);
     }
@@ -289,14 +312,14 @@ public class DrawView extends View {
                     System.out.println("drawing list not null");
                     for (DrawingDetailsBean bean : drawingList) {
                     // calculate aspect ratio of the two screens.
-                        if(bean.getHeight() == -1 || bean.getWidth() ==-1) {
+                        if(bean.getHeight() == NEW || bean.getWidth() == NEW) {
                             drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
                             invalidate();
                             return;
-                        } else if(bean.getWidth() == -2 || bean.getHeight() == -2){
+                        } else if(bean.getWidth() == SUCCESS || bean.getHeight() == SUCCESS){
                             populateSuccessMessage();
                             return;
-                        } else if(bean.getWidth() == -3 || bean.getHeight() == -3){
+                        } else if(bean.getWidth() == GIVE_UP || bean.getHeight() == GIVE_UP){
                             Log.d("Drawview","Second user exit");
                             stopThreads();
                             Toast.makeText(getContext(),"Your buddy gave up!",Toast.LENGTH_LONG);
@@ -316,6 +339,7 @@ public class DrawView extends View {
 
                             return;
                         }
+
                         float aspectHeight = ((float)canvasHeight)/bean.getHeight();
                         float aspectWidth = ((float)canvasWidth)/bean.getWidth();
 
@@ -342,9 +366,9 @@ public class DrawView extends View {
                         Point originalPoint = pointList.get(0);
                         pointList.remove(0);
                         Path tempPath = new Path();
-                        tempPath.moveTo(originalPoint.getX() * aspectWidth, originalPoint.getY() * aspectHeight);
+                        tempPath.moveTo(originalPoint.getX() *  density/160, (originalPoint.getY() + 20) * density/160);
                         for (Point point1 : pointList) {
-                            tempPath.lineTo(point1.getX() * aspectWidth, point1.getY() * aspectHeight);
+                            tempPath.lineTo(point1.getX() * density/160, point1.getY() * density/160);
 
                             Log.d("Point ", point1.getX() + "  " + point1.getY());
                         }

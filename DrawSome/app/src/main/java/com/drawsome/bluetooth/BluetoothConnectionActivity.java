@@ -121,6 +121,7 @@ public class BluetoothConnectionActivity extends Activity
     public void initiate(View v) {
         if(BA == null) {
             Toast.makeText(getApplicationContext(),"Bluetooth not supported by device",Toast.LENGTH_LONG);
+            finish();
         }
         Intent getVisible = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         getVisible.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVER_DURATION);

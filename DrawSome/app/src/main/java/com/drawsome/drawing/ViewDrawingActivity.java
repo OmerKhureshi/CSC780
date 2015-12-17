@@ -254,6 +254,7 @@ public class ViewDrawingActivity extends Activity {
                     public void onFinish(){
                         //set the new Content of your activity
                         mView.stopThreads();
+                        finish();
                         System.out.println("loading activity");
                         Intent intent = new Intent(getApplicationContext(), DifficultyActivity.class);
                         startActivity(intent);
@@ -356,6 +357,7 @@ public class ViewDrawingActivity extends Activity {
             public void onFinish(){
                 Log.d("counter ","finished");
                 mView.stopThreads();
+                finish();
                 Intent intent = new Intent(getApplicationContext(), DifficultyActivity.class);
                 startActivity(intent);
 
@@ -402,9 +404,13 @@ public class ViewDrawingActivity extends Activity {
         newDialog.show();
     }
 
+
+
     @Override
-    protected void onStop(){
-        super.onStop();
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.d("DrawingActivity", "canceling timer");
         timer.cancel();
+
     }
 }

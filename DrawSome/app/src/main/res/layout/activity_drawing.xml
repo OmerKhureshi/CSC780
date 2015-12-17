@@ -49,12 +49,18 @@
         android:layout_weight="1"
         android:background="#FFFFFFFF" />
 
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="120dp"
+        android:background="#007DD6">
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="120dp"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:background="#007DD6">
+        android:id="@+id/linearLayout"
+        android:gravity="center"
+        >
 
         <!--<Spinner-->
             <!--android:id="@+id/brushes_spinner"-->
@@ -116,5 +122,15 @@
             android:layout_margin="5dp"/>
 
     </LinearLayout>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You are drawing:"
+            android:id="@+id/drawing_text"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="5dp"/>
+    </RelativeLayout>
 </LinearLayout>

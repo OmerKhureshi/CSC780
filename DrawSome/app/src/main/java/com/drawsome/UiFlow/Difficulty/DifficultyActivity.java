@@ -1,8 +1,13 @@
 package com.drawsome.UiFlow.Difficulty;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,6 +23,7 @@ import com.drawsome.R;
 import com.drawsome.bluetooth.ConnectedThread;
 import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.drawing.DrawingActivity;
+import com.drawsome.drawing.ViewDrawingActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +95,8 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
     protected void onStart(){
         super.onStart();
         connectedThread = new ConnectedThread();
+        Handler handler = new UIHandler();
+        connectedThread.setHandler(handler);
         connectedThread.start();
     }
     private void setupViewPager(ViewPager viewPager) {
@@ -130,7 +138,12 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
 
     public void startDrawingActivity(View view) {
         connectedThread.write(word+";"+level);
-
+        try {
+            Thread.sleep(500);
+        }catch(InterruptedException ie){
+             Log.d("DifficultyActivity","Interrupted exception " + ie.getMessage());
+            ie.printStackTrace();
+         }
         Intent intent = new Intent(this, DrawingActivity.class);
         intent.putExtra("wordToGuess",word+";"+level);
         startActivity(intent);
@@ -158,4 +171,54 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
 //        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
 //        connectedThread.write(word);
 //    }
+
+    @Override
+    public void onBackPressed(){
+        AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+        newDialog.setMessage("Are you sure you want to exit?");
+        newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                connectedThread.write("exitMessage");
+                try{
+                    Thread.sleep(500);
+                }catch(InterruptedException ie){
+                    Log.d("DifficlutyActivity ","Intrrupted excepion " + ie.getMessage());
+                    ie.printStackTrace();
+                }
+
+                finish();
+                System.exit(0);
+
+            }
+        });
+        newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
+            public void onClick(DialogInterface dialog, int which){
+                dialog.cancel();
+
+            }
+        });
+        newDialog.show();
+    }
+
+
+
+    private final class UIHandler extends Handler {
+        public void handleMessage(Message msg) {
+            word = msg.getData().getString("wordToBeGuessed");
+            if (word != null) {
+           /*     runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        guess_word.setText(word);
+                    }
+                });*/
+
+                if(word.equalsIgnoreCase("exitMessage")){
+                    finish();
+
+                }
+
+            }
+        }
+    }
 }

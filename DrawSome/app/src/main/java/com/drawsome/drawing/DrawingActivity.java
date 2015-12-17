@@ -77,6 +77,10 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
             if(words[1] != null){
                 level = Integer.parseInt(words[1]);
             }
+            if(word != null){
+                TextView textView = (TextView)findViewById(R.id.drawing_text);
+                textView.setText("You are drawing: " + word);
+            }
         }
         mView = (DrawView) findViewById(R.id.draw);
         mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
@@ -557,8 +561,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     }
 
     @Override
-    protected void onStop(){
-        super.onStop();
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.d("DrawingActivity", "canceling timer");
         timer.cancel();
     }
 }
