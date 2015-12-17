@@ -19,6 +19,7 @@ public class SingletonBluetoothSocket {
 
     }
 
+
     public  BluetoothSocket getMmSocket() {
         return mmSocket;
     }
