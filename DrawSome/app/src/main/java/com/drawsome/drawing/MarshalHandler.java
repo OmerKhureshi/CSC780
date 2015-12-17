@@ -38,6 +38,9 @@ public class MarshalHandler {
     public byte[] marshal(DrawingDetailsBean drawingDetailsBean) {
       int lengthBean = 0;
         int lengthOfData =0;
+        final  int FLOAT_SIZE = 4;
+        final int INT_SIZE =4;
+
         if(drawingDetailsBean.getPointList() != null) {
 
             lengthBean = drawingDetailsBean.getPointList().size();
@@ -45,9 +48,13 @@ public class MarshalHandler {
             Log.d("marshal ", "lenthBean " + lengthBean);
 
         }
-        lengthOfData = lengthBean * 8 + 5 * 4 + 1;
+        // size of data = size of point list + size required for other parameters such as height, width +
+          // 1 byte to store eraser flag
+        lengthOfData = lengthBean * FLOAT_SIZE * 2 + 5 * INT_SIZE + 1;
         Log.d("marshal ", "lengthOfData " + lengthOfData);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(lengthOfData + 4);
+
+        // allocate buffer of the required size + 4 bytes to store the length of data itself and add data
+        ByteBuffer byteBuffer = ByteBuffer.allocate(lengthOfData + INT_SIZE);
         byteBuffer.putInt(lengthOfData);
         byteBuffer.putInt(drawingDetailsBean.getHeight());
         byteBuffer.putInt(drawingDetailsBean.getWidth());
@@ -58,6 +65,7 @@ public class MarshalHandler {
              byteBuffer.put((byte)1);
         else
             byteBuffer.put((byte)0);
+
         byteBuffer.putInt(lengthBean);
         if(drawingDetailsBean.getPointList() != null) {
             for (Point point : drawingDetailsBean.getPointList()) {
@@ -77,7 +85,7 @@ public class MarshalHandler {
     * @return List containing drawingDetailsBean objects.
      */
     public static ArrayList<DrawingDetailsBean> unmarshal(byte[] byteBuffer,int length) {
-        final int intSize = 4;
+        final int INT_SIZE = 4;
         int count =0;
         ArrayList<DrawingDetailsBean> drawingList = new ArrayList<DrawingDetailsBean>();
         Log.d("unmarshaler " ," bytebuffer length " + length);
@@ -133,8 +141,8 @@ public class MarshalHandler {
     // while buffer has data, unmarshal it.
      while(count < length) {
 
-         lengthObject = ByteBuffer.wrap(byteBuffer, count, intSize).getInt();
-         count = count + intSize;
+         lengthObject = ByteBuffer.wrap(byteBuffer, count, INT_SIZE).getInt();
+         count = count + INT_SIZE;
           Log.d("unmasrshaler ", " lengthOfObject " + lengthObject);
 
          // the complete object is received.

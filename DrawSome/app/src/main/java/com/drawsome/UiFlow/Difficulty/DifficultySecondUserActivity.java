@@ -12,19 +12,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-
 import com.drawsome.R;
 import com.drawsome.bluetooth.ConnectedThread;
-import com.drawsome.bluetooth.ConnectedThreadSingleton;
-import com.drawsome.drawing.DrawingActivity;
+import com.drawsome.bluetooth.SingletonBluetoothSocket;
 import com.drawsome.drawing.ViewDrawingActivity;
+
+import java.io.IOException;
 
 public class DifficultySecondUserActivity extends AppCompatActivity {
 
     private UIHandler difficultyHandler = new UIHandler();
     private ConnectedThread connectedThread;
     String word;
+    private final String WORD_KEY = "wordToBeGuessed";
+    private final String EXIT_KEY = "exitMessage";
+    private final String GUESS_WORD_KEY = "wordToGuess";
+    private final String SEPARATOR = ";";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +80,8 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
 
     private final class UIHandler extends Handler {
         public void handleMessage(Message msg) {
-            word = msg.getData().getString("wordToBeGuessed");
+
+            word = msg.getData().getString(WORD_KEY);
             if (word != null) {
            /*     runOnUiThread(new Runnable() {
                     @Override
@@ -84,15 +89,37 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
                         guess_word.setText(word);
                     }
                 });*/
-                if(word.equalsIgnoreCase("exitMessage")){
-                    finish();
-                    System.exit(0);
+                if(word.equalsIgnoreCase(EXIT_KEY)){
+                    handleExit();
+                    return;
                 }
                 Intent intent = new Intent(getApplicationContext(), ViewDrawingActivity.class);
-                intent.putExtra("wordToGuess", word);
+                intent.putExtra(GUESS_WORD_KEY, word);
                 startActivity(intent);
             }
         }
+    }
+
+    private void handleExit(){
+
+        try {
+            finish();
+            connectedThread.join(500);
+            if(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().isConnected() && connectedThread.isInterrupted()) {
+                SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getInputStream().close();
+                SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getOutputStream().close();
+                SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().close();
+
+                Log.d("DifficultyActivity","Closing bluetooth socket");
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+            Log.d("DIFFICULTYACTIVITY ","IOEXCEPTION " + e.getMessage());
+        }catch(InterruptedException e){
+            e.printStackTrace();
+            Log.d("DIFFICULTYACTIVITY ","INTERRUPTEDEXCEPTION " + e.getMessage());
+        }
+
     }
 
     @Override
@@ -102,17 +129,16 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
         newDialog.setMessage("Are you sure you want to exit?");
         newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                connectedThread.write("exitMessage");
+                connectedThread.write(EXIT_KEY);
+
+                // wait to make sure other device receives message
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ie) {
                     Log.d("DifficultyActivity ", "Interrupted exception " + ie.getMessage());
                     ie.printStackTrace();
                 }
-
-                finish();
-
-
+               handleExit();
             }
         });
         newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){

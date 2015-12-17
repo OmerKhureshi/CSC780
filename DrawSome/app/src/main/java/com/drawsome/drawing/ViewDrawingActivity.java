@@ -27,9 +27,6 @@ import android.widget.Toast;
 
 import com.drawsome.R;
 import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
-import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
-import com.drawsome.bluetooth.ConnectedThread;
-import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 import java.util.ArrayList;
@@ -46,16 +43,22 @@ public class ViewDrawingActivity extends Activity {
 
     DrawView mView;
     List<Integer> letterPlace = new ArrayList<>();
-    String word = "cat";
+    String word = null;
 
     private final int waitTime = 3;
-    private int level =1;
     private final int eastTimeToGuess =3;
     private final int mediumTimeToGuess =4;
     private final int hardTimeToGuess =5;
 
+    private int LEVEL_EASY = 1;
+    private int LEVEL_MEDIUM = 2;
+    private int LEVEL_HARD = 3;
+    private int level = LEVEL_EASY;
+
     CountDownTimer timer;
     List<Character> currentWord = new ArrayList<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,9 +79,23 @@ public class ViewDrawingActivity extends Activity {
             Toast.makeText(getApplicationContext(),"Something went wrong,Please relaunch the application",Toast.LENGTH_SHORT);
             finish();
         }
+
+        initGuessButtons();
+        createBlankButtons();
+
         setTimer();
 
-        // get a word and add characters to the list.
+        mView = (DrawView) findViewById(R.id.viewDraw);
+        mView.setClickable(false);
+        mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
+        mView.startThread();
+        mView.setTouchable(false);
+    }
+
+    /*
+     * Initialize the buttons to guess
+     */
+    private void initGuessButtons(){
         List<Character> shuffledList = new ArrayList<>();
         for(char c:word.toCharArray()){
             shuffledList.add(c);
@@ -95,18 +112,23 @@ public class ViewDrawingActivity extends Activity {
 
         Collections.shuffle(shuffledList);
 
-       // set the shuffled letters as text to the buttons
+        // set the shuffled letters as text to the buttons
         int index = 1;
         for(char c : shuffledList){
             int id = getResources().getIdentifier("guess_button" + index,"id","com.drawsome");
-           System.out.println("id " + id + " " + "guess_button" + index + " actual " + R.id.guess_button1);
+            System.out.println("id " + id + " " + "guess_button" + index + " actual " + R.id.guess_button1);
             Button b = (Button)findViewById(id);
             b.setText(String.valueOf(c));
             index++;
         }
 
-        // add buttons to let user guess the word.
-        // Number of buttons = length of the word to be gussed
+    }
+
+    /*
+     * add buttons to let user guess the word.
+     *Number of buttons = length of the word to be guessed
+     */
+    private void createBlankButtons(){
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.guessWordLayout);
         for(int i = 0 ; i < word.length(); i ++) {
@@ -130,17 +152,17 @@ public class ViewDrawingActivity extends Activity {
             button1.setBackgroundColor(Color.parseColor("#FFFFFF"));
             button1.setPadding(0,0,0,0);
             button.setOnClickListener(new View.OnClickListener() {
-              // on click of the button, move the character back to original place.
+                // on click of the button, move the character back to original place.
                 // set the button clickable as true.
                 @Override
                 public void onClick(View v) {
                     Button b = (Button)v;
-                        int button_id = b.getId();
+                    int button_id = b.getId();
                     System.out.println("button clicked: " +button_id);
                     if(b.getText() != "" && letterPlace.get(button_id) != -1) {
                         String resource = "guess_button" + letterPlace.get(button_id);
                         int id = getResources().getIdentifier(resource, "id", "com.drawsome");
-                       System.out.println("id " + id);
+                        System.out.println("id " + id);
                         Button replace = (Button) findViewById(id);
                         replace.setClickable(true);
                         replace.setAlpha(1);
@@ -155,12 +177,6 @@ public class ViewDrawingActivity extends Activity {
                 }
             });
         }
-
-        mView = (DrawView) findViewById(R.id.viewDraw);
-        mView.setClickable(false);
-       mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
-        mView.startThread();
-        mView.setTouchable(false);
     }
 
 
@@ -222,55 +238,63 @@ public class ViewDrawingActivity extends Activity {
             }
             System.out.println("current word" + current);
             if(word.equalsIgnoreCase(current.toString())) {
-                System.out.println("Bingo");
-                mView.sendWordGuessedMessage();
-
-                ImageButton img = (ImageButton)findViewById(R.id.checkbox);
-              //  img.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
-                img.animate()
-                        .alpha(1f)
-                        .setDuration(1000)
-                        .setListener(null);
-
-                MediaPlayer player = MediaPlayer.create(this,R.raw.success);
-                player.start();
-               /* try {
-                    Thread.sleep(3000);
-                }  catch(InterruptedException ie){
-                    Log.d("interruptedException", ie.getMessage());
-                    ie.printStackTrace();
-                }*/
-                //display the change user screen during 6 seconds,
-              new CountDownTimer(6000,2000){
-                   boolean flagViewSet = false;
-                   @Override
-                    public void onTick(long millisUntilFinished){
-                        System.out.println(millisUntilFinished);
-                        if(millisUntilFinished < 4500 && !flagViewSet) {
-                            flagViewSet = true;
-                            setContentView(R.layout.change_user);
-                        }
-                    }
-
-                    @Override
-                    public void onFinish(){
-                        //set the new Content of your activity
-                        mView.stopThreads();
-                        finish();
-                        System.out.println("loading activity");
-                        Intent intent = new Intent(getApplicationContext(), DifficultyActivity.class);
-                        startActivity(intent);
-                        //   YourActivity.this.setContentView(R.layout.main);
-
-                    }
-                }.start();
-
+                setSuccessMessage();
             }
         }
 
+    }
+
+    /*
+     * The method is called when the user guesses the correct word
+     */
+    private void setSuccessMessage(){
+        System.out.println("Bingo");
+
+        //send message to second device
+        mView.sendWordGuessedMessage();
+
+        // set check box animation
+        ImageButton img = (ImageButton)findViewById(R.id.checkbox);
+        //  img.setAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
+        img.animate()
+                .alpha(1f)
+                .setDuration(1000)
+                .setListener(null);
+
+        // start audio clip
+        MediaPlayer player = MediaPlayer.create(this,R.raw.success);
+        player.start();
+
+        //display the change user screen during 6 seconds,
+        new CountDownTimer(6000,2000){
+            boolean flagViewSet = false;
+            @Override
+            public void onTick(long millisUntilFinished){
+                System.out.println(millisUntilFinished);
+                if(millisUntilFinished < 4500 && !flagViewSet) {
+                    // set success screen for 4 seconds
+                    flagViewSet = true;
+                    setContentView(R.layout.change_user);
+                }
+            }
+
+            @Override
+            public void onFinish(){
+                // start new activity
+                mView.stopThreads();
+                finish();
+                System.out.println("loading activity");
+                Intent intent = new Intent(getApplicationContext(), DifficultyActivity.class);
+                startActivity(intent);
+
+            }
+        }.start();
 
     }
 
+    /*
+    * set timer with time as per difficulty level
+     */
     private void setTimer(){
 
 
@@ -304,14 +328,16 @@ public class ViewDrawingActivity extends Activity {
         final int endMin;
         final int endSec = 0;
         System.out.println("level " + level);
-        if(level == 1){
+        if(level == LEVEL_EASY){
             endMin = eastTimeToGuess;
-        } else if(level == 2){
+        } else if(level == LEVEL_MEDIUM){
             endMin = mediumTimeToGuess;
         } else{
             endMin = hardTimeToGuess;
         }
         System.out.println("endmin " + endMin);
+
+        //set countdown timer
         timer = new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){
             int min =endMin;
             int sec =endSec;
@@ -321,6 +347,7 @@ public class ViewDrawingActivity extends Activity {
 
                 if (flag || (min == 0 && sec < 10)) {
                  if(!flag){
+                     // set text color as red and flash for last 10 seconds
                      timerText.setTextColor(Color.parseColor("red"));
                      timerText.setVisibility(View.INVISIBLE);
                  } else {
@@ -329,6 +356,8 @@ public class ViewDrawingActivity extends Activity {
                          min--;
                          sec = 59;
                      }
+
+                     // when time is up, set the screen and start audio
                      if (min == 0 && sec == 0) {
                          setContentView(R.layout.time_is_up);
                          MediaPlayer player = MediaPlayer.create(ViewDrawingActivity.this,R.raw.negative);
@@ -338,6 +367,8 @@ public class ViewDrawingActivity extends Activity {
                          Log.d("counter ", "finished");
                      }
                      timerText.setVisibility(View.VISIBLE);
+
+                     // set label to show time left
                      if (sec < 10) {
                          timerText.setText(min + ":0" + sec);
                      } else {

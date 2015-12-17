@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Thread to handle sending and receiving text messages
  * Created by pooja on 11/4/2015.
  */
 public class ConnectedThread extends Thread{
@@ -83,7 +84,7 @@ public class ConnectedThread extends Thread{
     }
 
 
-    /* Call this from the main activity to send data to the remote device */
+    /* Call this to send data to the remote device */
     public void write(String message) {
         try {
             mmOutStream.write(message.getBytes());

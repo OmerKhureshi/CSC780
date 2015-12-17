@@ -33,10 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
-import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
 import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
-import com.drawsome.bluetooth.ConnectedThread;
-import com.drawsome.bluetooth.ConnectedThreadSingleton;
 import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 import java.util.UUID;
@@ -54,12 +51,16 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private int eraserSize;
     private float smallBrush, mediumBrush, largeBrush;
     private final int waitTime = 3;
-    private int level =1;
-    private final int eastTimeToGuess =3;
+   private final int eastTimeToGuess =3;
     private final int mediumTimeToGuess =4;
     private final int hardTimeToGuess =5;
     private String word;
     CountDownTimer timer;
+    private int LEVEL_EASY =1;
+    private int LEVEL_MEDIUM =1;
+    private int LEVEL_HARD =1;
+    private int level = LEVEL_EASY;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,9 +151,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
      }
 
     }
+
+
     private void setTimer(){
-
-
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarDrawing);
         // progressBar.setProgress(10);
         progressBar.setIndeterminate(false);
@@ -181,9 +182,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         final TextView timerText = (TextView)findViewById(R.id.time_text);
         final int endMin;
         final int endSec = 0;
-        if(level == 1){
+        if(level == LEVEL_EASY){
             endMin = eastTimeToGuess;
-        } else if(level == 2){
+        } else if(level == LEVEL_MEDIUM){
             endMin = mediumTimeToGuess;
         } else{
             endMin = hardTimeToGuess;
@@ -197,6 +198,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
                 if (flag || (min == 0 && sec < 10)) {
                     if(!flag){
+                        // set red color for last 10 seconds and make i flashing
                         timerText.setTextColor(Color.parseColor("red"));
                         timerText.setVisibility(View.INVISIBLE);
                     } else {
@@ -205,6 +207,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                             min--;
                             sec = 59;
                         }
+
+                        // when time is up, show screen and start audio
                         if (min == 0 && sec == 0) {
                             setContentView(R.layout.time_is_up);
                             MediaPlayer player = MediaPlayer.create(DrawingActivity.this,R.raw.negative);
@@ -212,6 +216,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
                             Log.d("counter ", "finished");
                         }
+
+                        // set label to show time left
                         timerText.setVisibility(View.VISIBLE);
                         if (sec < 10) {
                             timerText.setText(min + ":0" + sec);
@@ -224,6 +230,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
             }
             @Override
             public void onFinish(){
+                // start new activity: difficultySecondActivity
                 Log.d("counter ","finished");
                 mView.stopThreads();
                 Intent intent = new Intent(getApplicationContext(), DifficultySecondUserActivity.class);

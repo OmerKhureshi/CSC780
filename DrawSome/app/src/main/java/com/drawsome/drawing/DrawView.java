@@ -61,6 +61,10 @@ public class DrawView extends View {
     final private int SUCCESS = -2;
     final private int GIVE_UP = -3;
 
+    final private String DRAWING_DETAILS_KEY = "DrawingDetails";
+    final private String TYPE_KEY = "type";
+    final private String TYPE_SEND = "send";
+
     final float density = getContext().getResources().getDisplayMetrics().density;
     public DrawView(Context context) {
         super(context);
@@ -79,7 +83,7 @@ public class DrawView extends View {
     }
 
     /*
-    *   Sets initial attributes of tools such as paint,brush. Called by the constructor of this object
+     *   Sets initial attributes of tools such as paint,brush. Called by the constructor of this object
      */
     private void init() {
         brushSize = getResources().getInteger(R.integer.medium_size);
@@ -98,7 +102,7 @@ public class DrawView extends View {
     }
 
     /*
-    *  starts read and write threads for listening incoming data and sending data via bluetooth.
+     *  starts read and write threads for listening incoming data and sending data via bluetooth.
      */
     public void startThread() {
         connectedDrawingReadThread = new ConnectedDrawingReadThread(mmSocket,handler);
@@ -128,7 +132,7 @@ public class DrawView extends View {
 
     /*
     * The method to handle actual drawing. The data is also sent to other device on ACTION_UP event.
-     */
+    */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -150,7 +154,7 @@ public class DrawView extends View {
             drawingDetailsBean.getPointList().add(point);
             System.out.println("Point list " + drawingDetailsBean.getPointList().size());
 
-            //send the details to second device
+            //send drawing to second device
             if(drawingDetailsBean.getPointList().size() > SEND_LIMIT){
                 setHandlerMessage(drawingDetailsBean);
                 drawingDetailsBean = getDrawingObject(event.getX(),event.getY());
@@ -160,6 +164,8 @@ public class DrawView extends View {
 
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
             path.reset();
+
+            //send drawing to second device
             setHandlerMessage(drawingDetailsBean);
         }
         return true;
@@ -171,8 +177,8 @@ public class DrawView extends View {
     private void setHandlerMessage(DrawingDetailsBean bean) {
         Message msg = handler.obtainMessage();
         Bundle b = new Bundle();
-        b.putParcelable("DrawingDetails",bean);
-        b.putString("type","send");
+        b.putParcelable(DRAWING_DETAILS_KEY,bean);
+        b.putString(TYPE_KEY,TYPE_SEND);
         msg.setData(b);
         handler.sendMessage(msg);
     }
@@ -262,6 +268,9 @@ public class DrawView extends View {
                 }.start();
     }
 
+    /*
+     * send the word is guessed to second device
+     */
 
     public void sendWordGuessedMessage(){
         Log.d("DrawView ","sending success message");
@@ -274,6 +283,9 @@ public class DrawView extends View {
         setHandlerMessage(bean);
     }
 
+    /*
+     * send the give up message to other device
+     */
     public void sendGiveUpMessage(){
         Log.d("DrawView ","sending give up message");
         DrawingDetailsBean bean = new DrawingDetailsBean();
@@ -284,19 +296,65 @@ public class DrawView extends View {
         bean.setEraserFlag(false);
         setHandlerMessage(bean);
     }
+
+    /*
+     * set give up screen and play audio clip
+     */
+    private void populateGiveUpMessage(){
+        Log.d("Drawview","Second user exit");
+        stopThreads();
+        Toast.makeText(getContext(),"Your buddy gave up!",Toast.LENGTH_LONG);
+        new CountDownTimer(4000,1000){
+            boolean flag = true;
+            @Override
+            public void onTick(long millisUntilFinished){
+                if(flag) {
+                    ((Activity) getContext()).setContentView(R.layout.give_up);
+                    MediaPlayer player = MediaPlayer.create(getContext(), R.raw.give_up);
+                    player.start();
+                    flag = false;
+                }
+            }
+
+            @Override
+            public void onFinish(){
+                ((Activity)getContext()).finish();
+
+            }
+        }.start();
+
+    }
     /*
     * Private class which handles incoming data form other device and displays on canvas.
      */
     private final class UIHandler extends Handler {
+
+        private Paint setNewPaint(int color, float strokeWidth,boolean eraserFlag ){
+            Paint tempPaint = new Paint();
+            tempPaint.setStyle(Paint.Style.STROKE);
+            tempPaint.setStrokeJoin(Paint.Join.ROUND);
+            tempPaint.setStrokeCap(Paint.Cap.ROUND);
+            tempPaint.setDither(true);
+            tempPaint.setAntiAlias(true);
+            tempPaint.setColor(color);
+            if (eraserFlag)
+                tempPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+            else
+                tempPaint.setXfermode(null);
+
+            tempPaint.setStrokeWidth(strokeWidth);
+            return tempPaint;
+        }
+
         public void handleMessage(Message msg) {
             /**
              * Retrieve the contents of the message and then update the UI
              */
             System.out.println("in ui handler");
 
-            String type = msg.getData().getString("type");
-            if (type!= null && type.equalsIgnoreCase("send")) {
-                DrawingDetailsBean bean = msg.getData().getParcelable("DrawingDetails");
+            String type = msg.getData().getString(TYPE_KEY);
+            if (type!= null && type.equalsIgnoreCase(TYPE_SEND)) {
+                DrawingDetailsBean bean = msg.getData().getParcelable(DRAWING_DETAILS_KEY);
                 if (bean != null) {
                     synchronized (connectedDrawingWriteThread){
                         connectedDrawingWriteThread.addToListToSend(bean);
@@ -305,10 +363,7 @@ public class DrawView extends View {
                 }
 
             } else {
-
                 List<DrawingDetailsBean> drawingList = msg.getData().getParcelableArrayList("DrawingDetails");
-
-
                 if (drawingList != null) {
                     System.out.println("drawing list not null");
                     for (DrawingDetailsBean bean : drawingList) {
@@ -321,28 +376,7 @@ public class DrawView extends View {
                             populateSuccessMessage();
                             return;
                         } else if(bean.getWidth() == GIVE_UP || bean.getHeight() == GIVE_UP){
-                            Log.d("Drawview","Second user exit");
-                            stopThreads();
-                            Toast.makeText(getContext(),"Your buddy gave up!",Toast.LENGTH_LONG);
-                            new CountDownTimer(4000,1000){
-                                boolean flag = true;
-                                @Override
-                                public void onTick(long millisUntilFinished){
-                                    if(flag) {
-                                        ((Activity) getContext()).setContentView(R.layout.give_up);
-                                        MediaPlayer player = MediaPlayer.create(getContext(), R.raw.give_up);
-                                        player.start();
-                                        flag = false;
-                                    }
-                                }
-
-                                @Override
-                                public void onFinish(){
-                                    ((Activity)getContext()).finish();
-
-                                }
-                            }.start();
-
+                            populateGiveUpMessage();
                             return;
                         }
 
@@ -354,7 +388,9 @@ public class DrawView extends View {
 
                         //initialie paint attributes.
                         List<Point> pointList = bean.getPointList();
-                        Paint tempPaint = new Paint();
+
+                        Paint tempPaint = setNewPaint(bean.getPaint(),bean.getStrokewidth(),bean.isEraserFlag());
+                        /*Paint tempPaint = new Paint();
                         tempPaint.setStyle(Paint.Style.STROKE);
                         tempPaint.setStrokeJoin(Paint.Join.ROUND);
                         tempPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -367,7 +403,7 @@ public class DrawView extends View {
                             tempPaint.setXfermode(null);
 
                         tempPaint.setStrokeWidth(bean.getStrokewidth());
-
+                        */
                         // draw points on canvas.
                         Point originalPoint = pointList.get(0);
                         pointList.remove(0);
@@ -380,7 +416,6 @@ public class DrawView extends View {
                         }
                         drawCanvas.drawPath(tempPath, tempPaint);
                         invalidate();
-
 
                     }
                 }

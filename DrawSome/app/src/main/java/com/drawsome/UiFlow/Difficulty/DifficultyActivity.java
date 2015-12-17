@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TabLayout;
@@ -21,10 +20,10 @@ import android.widget.TextView;
 
 import com.drawsome.R;
 import com.drawsome.bluetooth.ConnectedThread;
-import com.drawsome.bluetooth.ConnectedThreadSingleton;
+import com.drawsome.bluetooth.SingletonBluetoothSocket;
 import com.drawsome.drawing.DrawingActivity;
-import com.drawsome.drawing.ViewDrawingActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,10 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
     String word;
     int level;
     private ConnectedThread connectedThread;
-
+    private final String WORD_KEY = "wordToBeGuessed";
+    private final String EXIT_KEY = "exitMessage";
+    private final String GUESS_WORD_KEY = "wordToGuess";
+    private final String SEPARATOR = ";";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +147,7 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
             ie.printStackTrace();
          }
         Intent intent = new Intent(this, DrawingActivity.class);
-        intent.putExtra("wordToGuess",word+";"+level);
+        intent.putExtra(GUESS_WORD_KEY, word + SEPARATOR + level);
         startActivity(intent);
     }
 
@@ -178,17 +180,14 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
         newDialog.setMessage("Are you sure you want to exit?");
         newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
             public void onClick(DialogInterface dialog, int which){
-                connectedThread.write("exitMessage");
+                connectedThread.write(EXIT_KEY);
                 try{
                     Thread.sleep(500);
                 }catch(InterruptedException ie){
                     Log.d("DifficlutyActivity ","Intrrupted excepion " + ie.getMessage());
                     ie.printStackTrace();
                 }
-
-                finish();
-                System.exit(0);
-
+                handleExit();
             }
         });
         newDialog.setNegativeButton("No", new DialogInterface.OnClickListener(){
@@ -201,10 +200,32 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
     }
 
 
+   private void handleExit(){
+
+        try {
+            finish();
+
+            connectedThread.join(500);
+            if(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().isConnected() && connectedThread.isInterrupted()) {
+                SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getInputStream().close();
+                SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getOutputStream().close();
+                SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().close();
+
+                Log.d("DifficultyActivity","Closing bluetooth socket");
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+            Log.d("DIFFICULTYACTIVITY ","IOEXCEPTION " + e.getMessage());
+        } catch(InterruptedException e){
+            e.printStackTrace();
+            Log.d("DIFFICULTYACTIVITY ","INTERRUPTEDEXCEPTION " + e.getMessage());
+        }
+
+    }
 
     private final class UIHandler extends Handler {
         public void handleMessage(Message msg) {
-            word = msg.getData().getString("wordToBeGuessed");
+            word = msg.getData().getString(WORD_KEY);
             if (word != null) {
            /*     runOnUiThread(new Runnable() {
                     @Override
@@ -213,9 +234,8 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
                     }
                 });*/
 
-                if(word.equalsIgnoreCase("exitMessage")){
-                    finish();
-
+                if(word.equalsIgnoreCase(EXIT_KEY)){
+                  handleExit();
                 }
 
             }
