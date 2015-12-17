@@ -232,6 +232,8 @@ public class ViewDrawingActivity extends Activity {
                         .setDuration(1000)
                         .setListener(null);
 
+                MediaPlayer player = MediaPlayer.create(this,R.raw.success);
+                player.start();
                /* try {
                     Thread.sleep(3000);
                 }  catch(InterruptedException ie){
@@ -274,7 +276,7 @@ public class ViewDrawingActivity extends Activity {
 
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarViewDrawing);
         // progressBar.setProgress(10);
-        progressBar.setIndeterminate(false);
+     //   progressBar.setIndeterminate(false);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
         animation.setDuration(5000);
         animation.setInterpolator(new DecelerateInterpolator());
@@ -329,16 +331,9 @@ public class ViewDrawingActivity extends Activity {
                      }
                      if (min == 0 && sec == 0) {
                          setContentView(R.layout.time_is_up);
-                        /* final MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.rain_thunders);
-                         mediaPlayer
-                                 .setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                                              @Override
-                                                              public void onCompletion(MediaPlayer mp) {
-                                                                  mediaPlayer.release();
+                         MediaPlayer player = MediaPlayer.create(ViewDrawingActivity.this,R.raw.negative);
+                         player.start();
 
-                                                              }
-                                                          });
-                         mediaPlayer.start();*/
 
                          Log.d("counter ", "finished");
                      }
@@ -376,12 +371,16 @@ public class ViewDrawingActivity extends Activity {
             public void onClick(DialogInterface dialog, int which){
                 mView.sendGiveUpMessage();
                 new CountDownTimer(4000,1000){
-                    boolean flagViewSet = false;
+                    boolean flagViewSet = true;
                     @Override
-                    public void onTick(long millisUntilFinished){
+                    public void onTick(long millisUntilFinished) {
+                        if (flagViewSet) {
                             setContentView(R.layout.give_up);
+                            MediaPlayer player = MediaPlayer.create(ViewDrawingActivity.this, R.raw.give_up);
+                            player.start();
+                            flagViewSet = false;
+                        }
                     }
-
                     @Override
                     public void onFinish(){
                         //set the new Content of your activity

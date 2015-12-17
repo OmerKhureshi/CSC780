@@ -32,6 +32,7 @@
             android:textColor="#FFFFFF"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
+
         <ProgressBar
             android:id="@+id/progressBarViewDrawing"
             android:layout_width="50dp"

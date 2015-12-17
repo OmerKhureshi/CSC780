@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.MediaStore;
@@ -206,6 +207,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                         }
                         if (min == 0 && sec == 0) {
                             setContentView(R.layout.time_is_up);
+                            MediaPlayer player = MediaPlayer.create(DrawingActivity.this,R.raw.negative);
+                            player.start();
+
                             Log.d("counter ", "finished");
                         }
                         timerText.setVisibility(View.VISIBLE);
@@ -530,10 +534,15 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 mView.sendGiveUpMessage();
                 timer.cancel();
                 new CountDownTimer(4000,1000){
-                    boolean flagViewSet = false;
+                    boolean flagViewSet = true;
                     @Override
                     public void onTick(long millisUntilFinished){
-                        setContentView(R.layout.give_up);
+                        if(flagViewSet) {
+                            setContentView(R.layout.give_up);
+                            MediaPlayer player = MediaPlayer.create(DrawingActivity.this, R.raw.give_up);
+                            player.start();
+                            flagViewSet = false;
+                        }
                     }
 
                     @Override

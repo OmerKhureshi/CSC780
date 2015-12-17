@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -324,10 +325,15 @@ public class DrawView extends View {
                             stopThreads();
                             Toast.makeText(getContext(),"Your buddy gave up!",Toast.LENGTH_LONG);
                             new CountDownTimer(4000,1000){
-
+                                boolean flag = true;
                                 @Override
                                 public void onTick(long millisUntilFinished){
-                                    ((Activity)getContext()).setContentView(R.layout.give_up);
+                                    if(flag) {
+                                        ((Activity) getContext()).setContentView(R.layout.give_up);
+                                        MediaPlayer player = MediaPlayer.create(getContext(), R.raw.give_up);
+                                        player.start();
+                                        flag = false;
+                                    }
                                 }
 
                                 @Override
