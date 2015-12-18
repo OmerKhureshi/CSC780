@@ -19,6 +19,11 @@ import com.drawsome.drawing.ViewDrawingActivity;
 
 import java.io.IOException;
 
+
+/**
+ * This activity displays a message to secondary user that primary user is selecting difficults.
+ * Author: Pooja Kanchan.
+ */
 public class DifficultySecondUserActivity extends AppCompatActivity {
 
     private UIHandler difficultyHandler = new UIHandler();

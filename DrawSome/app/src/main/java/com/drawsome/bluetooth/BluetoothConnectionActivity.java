@@ -32,11 +32,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 /*
- * The class handles bluetooth connection. It has methods to turn bluetooth ON,
+ * The class handles bluetooth connection pairing through NFC. An alternate option to manually setup
+ * bluetooth is also provided. It has methods to turn bluetooth ON,
  * make device visible to other devices, initialize connection and join the incoming connection.
  * The connection is initialized by one device. When the other device accepts the connection, bluetooth
  * channel is established between  them for exchange of data.
- * Created by pooja on 09/08/2015.
+ * Authors: Pooja Kanchan and Syed Omer Salar Khureshi
  */
 public class BluetoothConnectionActivity extends Activity
         implements NfcAdapter.CreateNdefMessageCallback, NfcAdapter.OnNdefPushCompleteCallback {
@@ -63,7 +64,6 @@ public class BluetoothConnectionActivity extends Activity
         setContentView(R.layout.activity_nfc);
 
         initiateButton = (Button) findViewById(R.id.initiateButton);
-        sendButton = (Button) findViewById(R.id.sendButton);
         joinButton = (Button) findViewById(R.id.joinButton);
         BA = BluetoothAdapter.getDefaultAdapter();
         mReceiver = new BroadcastReceiver() {
@@ -87,6 +87,7 @@ public class BluetoothConnectionActivity extends Activity
         // Register the BroadcastReceiver
         registerReceiver(mReceiver, intentFilter); // Don't forget to unregister during onDestroy
 
+        //Get NFC adapter and check if null to determine if device has NFC functionality.
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (nfcAdapter == null) {
             Log.v(this.getClass().toString(), "NFC is not available.");
@@ -94,20 +95,20 @@ public class BluetoothConnectionActivity extends Activity
             nfcAdapter.setNdefPushMessageCallback(this,this);
         }
 
-        slide = (Button) findViewById(R.id.button9);
-        linLayout = (LinearLayout) findViewById(R.id.linLayout);
-        linLayout.setAlpha(0.0f);
-        linLayout.setTranslationY(linLayout.getHeight());
-
-        slide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linLayout.animate()
-                        .alpha(1.0f)
-                        .translationY(0);
-
-            }
-        });
+//        slide = (Button) findViewById(R.id.button9);
+//        linLayout = (LinearLayout) findViewById(R.id.linLayout);
+//        linLayout.setAlpha(0.0f);
+//        linLayout.setTranslationY(linLayout.getHeight());
+//
+//        slide.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                linLayout.animate()
+//                        .alpha(1.0f)
+//                        .translationY(0);
+//
+//            }
+//        });
 
     }
 /*
@@ -347,6 +348,10 @@ public class BluetoothConnectionActivity extends Activity
         return ndefMessage;
     }
 
+    /**
+     * On successfully completing the NDEF message transfer, this call back method is invoked.
+     * Invokes bluetooth server connection.
+     */
     @Override
     public void onNdefPushComplete(NfcEvent event) {
         Log.v(this.getClass().toString(), "push complete!");

@@ -12,6 +12,10 @@
         android:textColor="#FFFFFF"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="60dp"/>
+        android:textSize="50dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:textAlignment="center"/>
 
 </RelativeLayout>
