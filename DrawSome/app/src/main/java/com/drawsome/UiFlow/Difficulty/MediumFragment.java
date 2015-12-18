@@ -18,6 +18,10 @@ import com.drawsome.database.WordsDBHelper;
 
 import java.util.List;
 
+/**
+ * Individual fragment for medium difficulty tab.
+ * Author: Syed Omer Salar Khureshi
+ */
 public class MediumFragment extends Fragment{
 
 

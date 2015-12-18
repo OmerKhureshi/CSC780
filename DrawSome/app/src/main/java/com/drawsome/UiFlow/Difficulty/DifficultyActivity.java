@@ -27,6 +27,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * This activity displays the difficulty levels to the user in different tabs.
+ * Authors: Pooja Kanchan and Syed Omer Salar Khureshi
+ */
 public class DifficultyActivity extends AppCompatActivity implements OnWordSelectListener{
 
     android.support.v4.view.ViewPager viewPager;

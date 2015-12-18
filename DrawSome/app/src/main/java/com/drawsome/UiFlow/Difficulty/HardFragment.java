@@ -18,6 +18,10 @@ import com.drawsome.database.WordsDBHelper;
 
 import java.util.List;
 
+/**
+ * Individual fragment for hard difficulty tab.
+ * Author: Syed Omer Salar Khureshi
+ */
 public class HardFragment extends Fragment{
 
     ListView listView;

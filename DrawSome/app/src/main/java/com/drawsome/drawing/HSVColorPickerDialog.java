@@ -17,6 +17,10 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+/**
+ * HSV color picker library(HSVColorPickerDialog)
+ * */
+
 
 public class HSVColorPickerDialog extends AlertDialog {
 
