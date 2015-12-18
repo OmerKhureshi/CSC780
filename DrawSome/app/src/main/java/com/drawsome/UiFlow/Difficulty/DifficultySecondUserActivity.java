@@ -80,7 +80,7 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
         //connectedThread.write("Ending thread");
         if (connectedThread != null)
             connectedThread.interrupt();
-        connectedThread = null;
+
     }
 
     private final class UIHandler extends Handler {
@@ -109,22 +109,23 @@ public class DifficultySecondUserActivity extends AppCompatActivity {
 
         try {
             finish();
-            connectedThread.join(500);
-            if(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().isConnected() && connectedThread.isInterrupted()) {
+            try {
+                connectedThread.join(700);
+            }catch(InterruptedException e){
+            e.printStackTrace();
+            Log.d("DIFFICULTYACTIVITY ","INTERRUPTEDEXCEPTION " + e.getMessage());
+            }
+        if(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().isConnected() && connectedThread.isInterrupted()) {
                 SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getInputStream().close();
                 SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getOutputStream().close();
                 SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().close();
-
+                SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(null);
                 Log.d("DifficultyActivity","Closing bluetooth socket");
             }
-        } catch(IOException e){
+        } catch(IOException e) {
             e.printStackTrace();
-            Log.d("DIFFICULTYACTIVITY ","IOEXCEPTION " + e.getMessage());
-        }catch(InterruptedException e){
-            e.printStackTrace();
-            Log.d("DIFFICULTYACTIVITY ","INTERRUPTEDEXCEPTION " + e.getMessage());
+            Log.d("DIFFICULTYACTIVITY ", "IOEXCEPTION " + e.getMessage());
         }
-
     }
 
     @Override

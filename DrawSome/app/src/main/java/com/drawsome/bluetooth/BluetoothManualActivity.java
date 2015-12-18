@@ -45,7 +45,7 @@ public class BluetoothManualActivity extends Activity
 
     private BluetoothAdapter BA;
     Button joinButton,initiateButton, sendButton;
-    // ConnectedThread connectedThread;
+
     private BroadcastReceiver mReceiver;
     private BluetoothDevice pairedDevice;
     private static final int DISCOVER_DURATION = 300;
@@ -202,7 +202,7 @@ public class BluetoothManualActivity extends Activity
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BluetoothSocket socket = null;
+        BluetoothSocket socket;
         // Keep listening until exception occurs or a socket is returned
         while (true) {
             try {
@@ -245,7 +245,7 @@ public class BluetoothManualActivity extends Activity
     /*
     * The method which handles client connection discovery process.
      */
-    private void clientConnect(View v) {
+    private void clientConnect() {
 
         Boolean res = BA.startDiscovery();
         System.out.println("** Started discovery!!!! " + res);

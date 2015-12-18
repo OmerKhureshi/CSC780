@@ -20,7 +20,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:id="@+id/imageView"
-        android:src="@drawable/smily"
+        android:src="@drawable/sad"
         android:layout_above="@+id/textView6"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

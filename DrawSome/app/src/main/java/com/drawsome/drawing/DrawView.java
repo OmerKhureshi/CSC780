@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -19,7 +18,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -139,7 +137,7 @@ public class DrawView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if(touchable == false){
+        if(!touchable){
                 return super.onTouchEvent(event);
         }
         // start drawing on action down event.
@@ -264,7 +262,7 @@ public class DrawView extends View {
                       System.out.println("loading activity");
                         ((Activity)getContext()).finish();
                         Intent intent = new Intent(getContext(), DifficultySecondUserActivity.class);
-                        ((Activity)getContext()).startActivity(intent);
+                        getContext().startActivity(intent);
                      //   YourActivity.this.setContentView(R.layout.main);
 
                     }
@@ -393,20 +391,7 @@ public class DrawView extends View {
                         List<Point> pointList = bean.getPointList();
 
                         Paint tempPaint = setNewPaint(bean.getPaint(),bean.getStrokewidth(),bean.isEraserFlag());
-                        /*Paint tempPaint = new Paint();
-                        tempPaint.setStyle(Paint.Style.STROKE);
-                        tempPaint.setStrokeJoin(Paint.Join.ROUND);
-                        tempPaint.setStrokeCap(Paint.Cap.ROUND);
-                        tempPaint.setDither(true);
-                        tempPaint.setAntiAlias(true);
-                        tempPaint.setColor(bean.getPaint());
-                        if (bean.isEraserFlag())
-                            tempPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-                        else
-                            tempPaint.setXfermode(null);
 
-                        tempPaint.setStrokeWidth(bean.getStrokewidth());
-                        */
                         // draw points on canvas.
                         Point originalPoint = pointList.get(0);
                         pointList.remove(0);
@@ -430,9 +415,8 @@ public class DrawView extends View {
 
     //set brush size
     public void setBrushSize(float newSize){
-        float pixelAmount = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+        brushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 newSize, getResources().getDisplayMetrics());
-        brushSize=pixelAmount;
         mPaint.setStrokeWidth(brushSize);
     }
 
@@ -470,9 +454,6 @@ public class DrawView extends View {
 
     public void setTouchable(boolean val){
         this.touchable = val;
-    }
-    public boolean isTouchable(){
-        return touchable;
     }
 
 }

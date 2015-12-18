@@ -29,6 +29,7 @@ import com.drawsome.UiFlow.Difficulty.DifficultyActivity;
 import com.drawsome.UiFlow.Difficulty.DifficultySecondUserActivity;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.UUID;
 
 /*
@@ -61,6 +62,10 @@ public class BluetoothConnectionActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_bluetooth_connection);
+
+
+
+
         setContentView(R.layout.activity_nfc);
 
         initiateButton = (Button) findViewById(R.id.initiateButton);
@@ -330,6 +335,19 @@ public class BluetoothConnectionActivity extends Activity
         super.onDestroy();
         BA.cancelDiscovery();
         unregisterReceiver(mReceiver);
+        BluetoothSocket socket = SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket();
+        if(socket != null && socket.isConnected()){
+            try {
+                socket.getInputStream().close();
+                socket.getOutputStream().close();
+                socket.close();
+            }catch(IOException io){
+                io.printStackTrace();
+                Log.d("BluetoothConnectionActivity  ",io.getMessage());
+            }
+            SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(null);
+            Log.d("BluetoothConnectionActivity  ","Closing socket");
+        }
     }
 
     public void callDrawingActivity(View view) {
@@ -381,4 +399,7 @@ public class BluetoothConnectionActivity extends Activity
         Intent intent = new Intent(this, BluetoothManualActivity.class);
         startActivity(intent);
     }
+
+
+
 }

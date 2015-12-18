@@ -24,6 +24,6 @@
     <string name="give_up"> Good try! </string>
     <string name="buddy_give_up"> Good try! Your buddy gave up... </string>
     <string name="connection_progress">Please wait. This should take only few seconds.</string>
-
+    <string name="init_instructions"> One player should click "Initiate" , and other should press "Join" after</string>
 
 </resources>

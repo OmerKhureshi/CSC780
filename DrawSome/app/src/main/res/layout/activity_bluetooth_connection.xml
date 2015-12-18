@@ -17,11 +17,11 @@
         android:id="@+id/initiateButton"
         android:textSize="20dp"
         android:padding="5dp"
+        android:layout_marginTop="185dp"
         android:background="#7c4dff"
         android:textColor="#FFFFFF"
-        android:layout_marginTop="185dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        />
 
     <Button
         android:layout_width="wrap_content"

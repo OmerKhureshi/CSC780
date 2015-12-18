@@ -163,7 +163,7 @@
                 android:layout_height="55dp"
                 android:layout_width="55dp"
                 android:layout_margin="3dp"
-                android:src="@drawable/checkbox"
+                android:src="@drawable/checkbox1"
                 android:alpha="0"
                 />
 

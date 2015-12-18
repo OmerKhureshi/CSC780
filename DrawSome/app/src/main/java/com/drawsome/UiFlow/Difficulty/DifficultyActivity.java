@@ -172,7 +172,7 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
         if(connectedThread != null)
             connectedThread.interrupt();
         Log.d("Thread interrupted ", "" + connectedThread.isInterrupted());
-        connectedThread = null;
+
     }
 //    public void sendWord(String wordSelected) {
 //        ConnectedThread connectedThread = ConnectedThreadSingleton.getConnectedThreadInstance().getConnectedThread();
@@ -209,21 +209,22 @@ public class DifficultyActivity extends AppCompatActivity implements OnWordSelec
 
         try {
             finish();
-
-            connectedThread.join(500);
+            try {
+                connectedThread.join(700);
+            }catch(InterruptedException e){
+                    e.printStackTrace();
+                    Log.d("DIFFICULTYACTIVITY ","INTERRUPTEDEXCEPTION " + e.getMessage());
+             }
             if(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().isConnected() && connectedThread.isInterrupted()) {
                 SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getInputStream().close();
                 SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().getOutputStream().close();
                 SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket().close();
-
+                SingletonBluetoothSocket.getBluetoothSocketInstance().setMmSocket(null);
                 Log.d("DifficultyActivity","Closing bluetooth socket");
             }
         } catch(IOException e){
             e.printStackTrace();
             Log.d("DIFFICULTYACTIVITY ","IOEXCEPTION " + e.getMessage());
-        } catch(InterruptedException e){
-            e.printStackTrace();
-            Log.d("DIFFICULTYACTIVITY ","INTERRUPTEDEXCEPTION " + e.getMessage());
         }
 
     }
