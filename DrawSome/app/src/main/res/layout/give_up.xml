@@ -10,7 +10,17 @@
     android:textColor="#000000"
     android:gravity="center"
     android:layout_centerVertical="true"
-    android:layout_centerHorizontal="true">
+    android:layout_centerHorizontal="true"
+    android:id="@+id/textView2">
 
     </TextView>
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/imageView"
+        android:src="@drawable/smily"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
