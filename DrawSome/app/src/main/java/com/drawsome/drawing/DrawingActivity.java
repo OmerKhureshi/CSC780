@@ -1,7 +1,6 @@
 package com.drawsome.drawing;
 
 
-
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
@@ -51,7 +50,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private Spinner brush;
     private int brushDefSize;
     private int eraserSize;
-    private float smallBrush, mediumBrush, largeBrush;
+    private float smallBrush, mediumBrush, largeBrush, xlBrush, xxlBrush;
     private final int waitTime = 3;
     private final int eastTimeToGuess =3;
     private final int mediumTimeToGuess =4;
@@ -101,6 +100,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
+        xlBrush = getResources().getInteger(R.integer.xl_size);
+        xxlBrush = getResources().getInteger(R.integer.xxl_size);
         brushDefSize = R.integer.medium_size;
 
         setTimer();
@@ -164,26 +165,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarDrawing);
         // progressBar.setProgress(10);
         progressBar.setIndeterminate(false);
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
-        animation.setDuration(5000);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) { }
 
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                //do something when the countdown is complete
-                Log.d("Progressbar "," Animation complete");
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) { }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) { }
-        });
-        animation.start();
 
 
         final TextView timerText = (TextView)findViewById(R.id.time_text);
@@ -249,6 +231,27 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
             }
         }.start();
+
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+        animation.setDuration((endMin*60 + endSec + waitTime) * 1000);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) { }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //do something when the countdown is complete
+                Log.d("Progressbar "," Animation complete");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) { }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) { }
+        });
+        animation.start();
 
 
 
@@ -455,6 +458,29 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                     brushDialog.dismiss();
                 }
             });
+            ImageButton xlBtn = (ImageButton)brushDialog.findViewById(R.id.xl_brush);
+            xlBtn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(largeBrush);
+                    mView.setLastBrushSize(largeBrush);
+                    mView.setAlpha(255);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton xxlBtn = (ImageButton)brushDialog.findViewById(R.id.xxl_brush);
+            xxlBtn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(largeBrush);
+                    mView.setLastBrushSize(largeBrush);
+                    mView.setAlpha(255);
+                    brushDialog.dismiss();
+                }
+            });
+
             //show and wait for user interaction
             brushDialog.show();
         }
@@ -497,6 +523,29 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                     brushDialog.dismiss();
                 }
             });
+            ImageButton xlBtn = (ImageButton)brushDialog.findViewById(R.id.xl_brush);
+            xlBtn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(largeBrush);
+                    mView.setLastBrushSize(largeBrush);
+                    mView.setAlpha(125);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton xxlBtn = (ImageButton)brushDialog.findViewById(R.id.xxl_brush);
+            xxlBtn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(largeBrush);
+                    mView.setLastBrushSize(largeBrush);
+                    mView.setAlpha(125);
+                    brushDialog.dismiss();
+                }
+            });
+
             //show and wait for user interaction
             brushDialog.show();
         }
@@ -530,6 +579,24 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 public void onClick(View v) {
                     mView.setErase(true);
                     mView.setBrushSize(largeBrush);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton xlBtn = (ImageButton)brushDialog.findViewById(R.id.xl_brush);
+            xlBtn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(true);
+                    mView.setBrushSize(xlBrush);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton xxlBtn = (ImageButton)brushDialog.findViewById(R.id.xxl_brush);
+            xxlBtn.setOnClickListener(new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(true);
+                    mView.setBrushSize(xxlBrush);
                     brushDialog.dismiss();
                 }
             });

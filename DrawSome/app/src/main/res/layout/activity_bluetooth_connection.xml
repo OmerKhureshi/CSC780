@@ -48,4 +48,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="56dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Select one of the options below. Your friend chooses the other on their phone"
+        android:id="@+id/textView7"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:gravity="center" />
+
 </RelativeLayout>

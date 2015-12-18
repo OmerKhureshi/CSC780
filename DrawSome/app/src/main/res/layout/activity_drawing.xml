@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/sand_timer"
+            android:src="@drawable/hourglass"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
         <TextView
@@ -30,18 +30,20 @@
             android:textColor="#FFFFFF"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
-    <ProgressBar
-        android:id="@+id/progressBarDrawing"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:indeterminate="false"
-        android:progressDrawable="@drawable/circular_progress_bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:max="100" />
+        <ProgressBar
+            android:id="@+id/progressBarDrawing"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:max="100" />
+
 
     </LinearLayout>
+
     <com.drawsome.drawing.DrawView
         android:id="@+id/draw"
         android:layout_width="fill_parent"
