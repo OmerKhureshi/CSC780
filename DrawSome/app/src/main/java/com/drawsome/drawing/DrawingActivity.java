@@ -165,26 +165,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarDrawing);
         // progressBar.setProgress(10);
         progressBar.setIndeterminate(false);
-        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
-        animation.setDuration(5000);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) { }
 
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                //do something when the countdown is complete
-                Log.d("Progressbar "," Animation complete");
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) { }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) { }
-        });
-        animation.start();
 
 
         final TextView timerText = (TextView)findViewById(R.id.time_text);
@@ -250,6 +231,27 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
             }
         }.start();
+
+        ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
+        animation.setDuration((endMin*60 + endSec + waitTime) * 1000);
+        animation.setInterpolator(new DecelerateInterpolator());
+        animation.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) { }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                //do something when the countdown is complete
+                Log.d("Progressbar "," Animation complete");
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) { }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) { }
+        });
+        animation.start();
 
 
 
