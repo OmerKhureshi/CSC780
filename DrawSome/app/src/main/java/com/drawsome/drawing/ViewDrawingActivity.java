@@ -298,11 +298,23 @@ public class ViewDrawingActivity extends Activity {
     private void setTimer(){
 
 
+        final int endMin;
+        final int endSec = 0;
+        System.out.println("level " + level);
+        if(level == LEVEL_EASY){
+            endMin = eastTimeToGuess;
+        } else if(level == LEVEL_MEDIUM){
+            endMin = mediumTimeToGuess;
+        } else{
+            endMin = hardTimeToGuess;
+        }
+        System.out.println("endmin " + endMin);
+
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBarViewDrawing);
         // progressBar.setProgress(10);
      //   progressBar.setIndeterminate(false);
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
-        animation.setDuration(5000);
+        animation.setDuration((endMin*60 + endSec) * 1000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.addListener(new Animator.AnimatorListener() {
             @Override
@@ -325,17 +337,7 @@ public class ViewDrawingActivity extends Activity {
 
         final TextView timerText = (TextView)findViewById(R.id.timer_text);
 
-        final int endMin;
-        final int endSec = 0;
-        System.out.println("level " + level);
-        if(level == LEVEL_EASY){
-            endMin = eastTimeToGuess;
-        } else if(level == LEVEL_MEDIUM){
-            endMin = mediumTimeToGuess;
-        } else{
-            endMin = hardTimeToGuess;
-        }
-        System.out.println("endmin " + endMin);
+
 
         //set countdown timer
         timer = new CountDownTimer((endMin*60 + endSec + waitTime) * 1000,500){

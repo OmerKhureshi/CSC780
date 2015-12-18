@@ -233,7 +233,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
         }.start();
 
         ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", 0, 100);
-        animation.setDuration((endMin*60 + endSec + waitTime) * 1000);
+        animation.setDuration((endMin*60 + endSec) * 1000);
         animation.setInterpolator(new DecelerateInterpolator());
         animation.addListener(new Animator.AnimatorListener() {
             @Override
