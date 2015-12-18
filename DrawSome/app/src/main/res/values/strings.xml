@@ -22,7 +22,8 @@
     <string name="title_activity_turn_to_guess">TurnToGuessActivity</string>
     <string name="time_up"> Good try..Your time is up! </string>
     <string name="give_up"> Good try! </string>
-    <string name="buddy_give_up"> Good try!Your buddy gave_up... </string>
+    <string name="buddy_give_up"> Good try! Your buddy gave up... </string>
+    <string name="connection_progress">Please wait. This should take only few seconds.</string>
 
 
 </resources>

@@ -34,8 +34,10 @@ import com.drawsome.bluetooth.ConnectedDrawingWriteThread;
 import java.util.ArrayList;
 import java.util.List;
 /*
- * The class provides drawing canvas and implements drawing actions like change color, eraser etc.
- *Created by pooja on 09/15/2015.
+ * This class extends View and draws the custom view consisting of the drawing area.
+ * It also support sending strokes to secondary device.
+ * Authors: Pooja Kanchan and Syed Omer Salar Khureshi
+ *
  */
 
 public class DrawView extends View {
@@ -110,6 +112,7 @@ public class DrawView extends View {
         connectedDrawingWriteThread = new ConnectedDrawingWriteThread(mmSocket);
         connectedDrawingWriteThread.start();
     }
+
     public BluetoothSocket getMmSocket() {
         return mmSocket;
     }
@@ -446,6 +449,10 @@ public class DrawView extends View {
         erase=isErase;
         if(erase) mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         else mPaint.setXfermode(null);
+    }
+
+    public void setAlpha(int val) {
+        mPaint.setAlpha(val);
     }
 
     //start new drawing

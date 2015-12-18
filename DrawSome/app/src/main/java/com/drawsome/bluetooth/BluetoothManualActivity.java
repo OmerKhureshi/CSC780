@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.drawsome.R;
@@ -32,11 +33,12 @@ import java.io.IOException;
 import java.util.UUID;
 
 /*
- * The class handles bluetooth connection. It has methods to turn bluetooth ON,
+ * The class handles bluetooth connection through server and client. The users are required
+ * start the bluetooth in server or client mode. It has methods to turn bluetooth ON,
  * make device visible to other devices, initialize connection and join the incoming connection.
  * The connection is initialized by one device. When the other device accepts the connection, bluetooth
  * channel is established between  them for exchange of data.
- * Created by pooja on 09/08/2015.
+ * Authors: Pooja Kanchan and Syed Omer Salar Khureshi
  */
 public class BluetoothManualActivity extends Activity
         implements NfcAdapter.CreateNdefMessageCallback, NfcAdapter.OnNdefPushCompleteCallback {
@@ -59,7 +61,6 @@ public class BluetoothManualActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
         initiateButton = (Button) findViewById(R.id.initiateButton);
-        sendButton = (Button) findViewById(R.id.sendButton);
         joinButton = (Button) findViewById(R.id.joinButton);
         BA = BluetoothAdapter.getDefaultAdapter();
         mReceiver = new BroadcastReceiver() {
@@ -97,6 +98,10 @@ public class BluetoothManualActivity extends Activity
   */
 
     public void initiate(View v) {
+        TextView showProgress = (TextView) findViewById(R.id.textView_progress);
+        showProgress.setText(R.string.connection_progress);
+        initiateButton.setEnabled(false);
+        joinButton.setEnabled(false);
         if(BA == null) {
             Toast.makeText(getApplicationContext(),"Bluetooth not supported by device",Toast.LENGTH_LONG);
         }
@@ -112,6 +117,10 @@ public class BluetoothManualActivity extends Activity
      * to server socket
      */
     public void join(View v) {
+        TextView showProgress = (TextView) findViewById(R.id.textView_progress);
+        showProgress.setText(R.string.connection_progress);
+        initiateButton.setEnabled(false);
+        joinButton.setEnabled(false);
         if(BA == null) {
             Toast.makeText(getApplicationContext(),"Bluetooth not supported by device",Toast.LENGTH_LONG);
         }

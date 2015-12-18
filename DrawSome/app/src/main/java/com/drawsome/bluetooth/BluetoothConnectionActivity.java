@@ -64,7 +64,6 @@ public class BluetoothConnectionActivity extends Activity
         setContentView(R.layout.activity_nfc);
 
         initiateButton = (Button) findViewById(R.id.initiateButton);
-        sendButton = (Button) findViewById(R.id.sendButton);
         joinButton = (Button) findViewById(R.id.joinButton);
         BA = BluetoothAdapter.getDefaultAdapter();
         mReceiver = new BroadcastReceiver() {

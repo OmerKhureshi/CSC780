@@ -26,7 +26,9 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -60,6 +62,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private int LEVEL_MEDIUM =1;
     private int LEVEL_HARD =1;
     private int level = LEVEL_EASY;
+    LinearLayout linearLayout;
+    RelativeLayout relativeLayout;
 
 
     @Override
@@ -86,6 +90,9 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 textView.setText("You are drawing: " + word);
             }
         }
+
+        linearLayout = (LinearLayout)findViewById(R.id.background);
+        relativeLayout = (RelativeLayout)findViewById(R.id.rel_background);
         mView = (DrawView) findViewById(R.id.draw);
         mView.setMmSocket(SingletonBluetoothSocket.getBluetoothSocketInstance().getMmSocket());
         mView.startThread();
@@ -372,6 +379,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 //drawView.setColor(test, colorHsv);
                 Toast.makeText(getApplicationContext(), "Color: " + color, Toast.LENGTH_SHORT).show();
                 mView.setColor(color);
+                linearLayout.setBackgroundColor(color);
+                relativeLayout.setBackgroundColor(color);
             }
         });
         cpd.setTitle( "Pick a color" );
@@ -409,8 +418,6 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
         if(view.getId()==R.id.draw_btn){
             //draw button clicked
-
-
             final Dialog brushDialog = new Dialog(this);
             brushDialog.setTitle("Brush size:");
             brushDialog.setContentView(R.layout.brush_chooser);
@@ -422,6 +429,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                     mView.setErase(false);
                     mView.setBrushSize(smallBrush);
                     mView.setLastBrushSize(smallBrush);
+                    mView.setAlpha(255);
                     brushDialog.dismiss();
                 }
             });
@@ -432,6 +440,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                     mView.setErase(false);
                     mView.setBrushSize(mediumBrush);
                     mView.setLastBrushSize(mediumBrush);
+                    mView.setAlpha(255);
                     brushDialog.dismiss();
                 }
             });
@@ -442,6 +451,49 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                     mView.setErase(false);
                     mView.setBrushSize(largeBrush);
                     mView.setLastBrushSize(largeBrush);
+                    mView.setAlpha(255);
+                    brushDialog.dismiss();
+                }
+            });
+            //show and wait for user interaction
+            brushDialog.show();
+        }
+        else if(view.getId()==R.id.draw_brush){
+            //draw button clicked
+            final Dialog brushDialog = new Dialog(this);
+            brushDialog.setTitle("Select size:");
+            brushDialog.setContentView(R.layout.brush_chooser);
+            //listen for clicks on size buttons
+            ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+            smallBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(smallBrush);
+                    mView.setLastBrushSize(smallBrush);
+                    mView.setAlpha(125);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+            mediumBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(mediumBrush);
+                    mView.setLastBrushSize(mediumBrush);
+                    mView.setAlpha(125);
+                    brushDialog.dismiss();
+                }
+            });
+            ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+            largeBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mView.setErase(false);
+                    mView.setBrushSize(largeBrush);
+                    mView.setLastBrushSize(largeBrush);
+                    mView.setAlpha(125);
                     brushDialog.dismiss();
                 }
             });
@@ -562,8 +614,6 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                         //set the new Content of your activity
                         mView.stopThreads();
                         finish();
-                        //   YourActivity.this.setContentView(R.layout.main);
-
                     }
                 }.start();
 
@@ -578,7 +628,6 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
             }
         });
         newDialog.show();
-
     }
 
     @Override

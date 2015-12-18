@@ -10,6 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin" >
     <!-- Top Buttons -->
     <LinearLayout android:layout_height="wrap_content"
+        android:id="@+id/background"
         android:layout_width="fill_parent"
         android:background="#007DD6"
         android:orientation="horizontal"
@@ -52,7 +53,8 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="120dp"
-        android:background="#007DD6">
+        android:background="#007DD6"
+        android:id="@+id/rel_background">
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="120dp"
@@ -70,7 +72,8 @@
 
         <ImageView
             android:id="@+id/new_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="fill_parent"
             android:contentDescription="@string/start_new"
             android:src="@drawable/new_new_canvas"
@@ -78,14 +81,16 @@
 
         <ImageView
             android:id="@+id/draw_btn"
-            android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:src="@drawable/new_pencil"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"/>
 
         <ImageView
             android:id="@+id/draw_brush"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="fill_parent"
             android:contentDescription="@string/brush"
             android:src="@drawable/new_brush"
@@ -99,7 +104,8 @@
 
         <ImageView
             android:id="@+id/erase_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="fill_parent"
             android:contentDescription="@string/erase"
             android:src="@drawable/new_erase"
@@ -107,7 +113,8 @@
 
         <ImageView
             android:id="@+id/save_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="fill_parent"
             android:contentDescription="@string/save"
             android:src="@drawable/new_save"
@@ -115,7 +122,8 @@
 
         <ImageView
             android:id="@+id/button_colorPicker"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="fill_parent"
             android:onClick="pickColor"
             android:src="@drawable/new_palette"

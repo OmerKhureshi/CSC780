@@ -4,8 +4,8 @@
 	android:shape="oval" >
 
 	<size
-		android:height="@dimen/small_brush"
-		android:width="@dimen/small_brush" />
+		android:height="@dimen/xl_brush"
+		android:width="@dimen/xl_brush" />
 
 	<solid android:color="#000000" />
 

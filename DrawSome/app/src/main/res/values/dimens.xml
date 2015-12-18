@@ -11,9 +11,15 @@
 
     <integer name="medium_size">20</integer>
 
+    <integer name="large_size">30</integer>
+
     <dimen name="large_brush">30dp</dimen>
 
-    <integer name="large_size">30</integer>
+    <dimen name="xl_brush">40dp</dimen>
+
+    <dimen name="xxl_brush">50dp</dimen>
+
+    <dimen name="button">5dp</dimen>
 
     <dimen name="guess_button">40dp</dimen>
     <dimen name="guess_button_text">30dp</dimen>
