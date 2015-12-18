@@ -94,20 +94,20 @@ public class BluetoothConnectionActivity extends Activity
             nfcAdapter.setNdefPushMessageCallback(this,this);
         }
 
-        slide = (Button) findViewById(R.id.button9);
-        linLayout = (LinearLayout) findViewById(R.id.linLayout);
-        linLayout.setAlpha(0.0f);
-        linLayout.setTranslationY(linLayout.getHeight());
-
-        slide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                linLayout.animate()
-                        .alpha(1.0f)
-                        .translationY(0);
-
-            }
-        });
+//        slide = (Button) findViewById(R.id.button9);
+//        linLayout = (LinearLayout) findViewById(R.id.linLayout);
+//        linLayout.setAlpha(0.0f);
+//        linLayout.setTranslationY(linLayout.getHeight());
+//
+//        slide.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                linLayout.animate()
+//                        .alpha(1.0f)
+//                        .translationY(0);
+//
+//            }
+//        });
 
     }
 /*

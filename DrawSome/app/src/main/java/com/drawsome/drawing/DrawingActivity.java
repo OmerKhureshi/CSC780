@@ -38,9 +38,9 @@ import com.drawsome.bluetooth.SingletonBluetoothSocket;
 
 import java.util.UUID;
 
-/*
- * The activity which handles UI events of drawing canvas and drawing tools.
- * Created by pooja on 10/15/2015.
+/**
+ * This activity presents the user with the canvas to draw and the tools to draw.
+ * Authors: Pooja Kanchan and Syed Omer Salar Khureshi
  */
 public class DrawingActivity extends Activity implements View.OnClickListener{
 
@@ -51,7 +51,7 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private int eraserSize;
     private float smallBrush, mediumBrush, largeBrush;
     private final int waitTime = 3;
-   private final int eastTimeToGuess =3;
+    private final int eastTimeToGuess =3;
     private final int mediumTimeToGuess =4;
     private final int hardTimeToGuess =5;
     private String word;
@@ -61,10 +61,12 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private int LEVEL_HARD =1;
     private int level = LEVEL_EASY;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Hide the actions bar for full screen viewing.
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -145,8 +147,6 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
      if(v instanceof ImageButton) {
          ImageButton img = (ImageButton) v;
          ColorDrawable colorDrawable = (ColorDrawable)img.getBackground();
-         System.out.println("****************** color " + colorDrawable.getColor());
-
          mView.setColor(colorDrawable.getColor());
      }
 
@@ -228,6 +228,10 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 }
                 flag = !flag;
             }
+
+            /**
+             * onFinish callback is used to stop thread and invoke the DifficultySecondUserActivity activity
+             */
             @Override
             public void onFinish(){
                 // start new activity: difficultySecondActivity
@@ -243,9 +247,10 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
 
     }
 
-  /*
-  * Class handles UI events related to brush size.
-   */
+
+    /**
+     * Class handles UI events related to brush size.
+     */
     public class MyAdapterBrushSize extends ArrayAdapter<String> {
 
         String[] sObj;
