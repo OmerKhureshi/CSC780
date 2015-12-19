@@ -8,3 +8,7 @@ DrawSome is an interactive drawing app. It uses bluetooth to show what you are d
 <h4>Troubleshooting:</h4>
 If the devices donot pair through bluetooth, toggle bluetooth and relaunch the app.
 
+![alt tag](https://github.com/omersalar/CSC780/blob/master/Screenshots/home_screen.png)
+![alt tag](https://github.com/omersalar/CSC780/blob/master/Screenshots/difficulty_screen.png)
+![alt tag](https://github.com/omersalar/CSC780/blob/master/Screenshots/drawing_screen_primary.png)
+![alt tag](https://github.com/omersalar/CSC780/blob/master/Screenshots/drawing_screen_secondary.png)
