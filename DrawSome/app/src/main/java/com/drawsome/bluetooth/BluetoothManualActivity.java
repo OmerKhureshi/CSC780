@@ -100,8 +100,6 @@ public class BluetoothManualActivity extends Activity
     public void initiate(View v) {
         TextView showProgress = (TextView) findViewById(R.id.textView_progress);
         showProgress.setText(R.string.connection_progress);
-        initiateButton.setEnabled(false);
-        joinButton.setEnabled(false);
         if(BA == null) {
             Toast.makeText(getApplicationContext(),"Bluetooth not supported by device",Toast.LENGTH_LONG);
         }
@@ -119,8 +117,6 @@ public class BluetoothManualActivity extends Activity
     public void join(View v) {
         TextView showProgress = (TextView) findViewById(R.id.textView_progress);
         showProgress.setText(R.string.connection_progress);
-        initiateButton.setEnabled(false);
-        joinButton.setEnabled(false);
         if(BA == null) {
             Toast.makeText(getApplicationContext(),"Bluetooth not supported by device",Toast.LENGTH_LONG);
         }

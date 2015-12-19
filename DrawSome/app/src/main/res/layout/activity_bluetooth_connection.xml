@@ -5,7 +5,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.drawsome.bluetooth.BluetoothConnectionActivity"
-    android:background="#b388ff"
+    android:background="#ce93d8"
    >
 
 
@@ -18,10 +18,10 @@
         android:textSize="20dp"
         android:padding="5dp"
         android:layout_marginTop="185dp"
-        android:background="#7c4dff"
+        android:background="#ab47bc"
         android:textColor="#FFFFFF"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
         android:id="@+id/joinButton"
         android:textSize="20dp"
         android:padding="5dp"
-        android:background="#7c4dff"
+        android:background="#ab47bc"
         android:textColor="#FFFFFF"
         android:layout_below="@+id/initiateButton"
         android:layout_alignRight="@+id/initiateButton"

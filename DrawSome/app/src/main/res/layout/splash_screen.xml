@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="#0b1a4b"
+    android:backgroundTint="#0d0c3c">
 
     <ImageView android:id="@+id/splashscreen"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/splash"
-        android:layout_gravity="center"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/app_icon_new"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="made by Pooja and Syed Omer"
+        android:layout_below="@+id/splashscreen"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="55dp"
+        android:textColor="#ef5350" />
 
-</LinearLayout>
+</RelativeLayout>
+
+<!--Pencil graphic by <a href="http://graphicsbay.com">Graphicsbay</a> and Big Mug Solid graphic by <a href="http://catalinfertu.com">Catalin Fertu</a> and Brush graphic by <a href="http://www.meanicons.com">Vectorgraphit</a> from <a href="http://www.flaticon.com/">Flaticon</a> are licensed under <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a>. Made with <a href="http://logomakr.com" title="Logo Maker">Logo Maker</a>-->

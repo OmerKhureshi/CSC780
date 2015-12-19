@@ -58,8 +58,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
     private String word;
     CountDownTimer timer;
     private int LEVEL_EASY =1;
-    private int LEVEL_MEDIUM =1;
-    private int LEVEL_HARD =1;
+    private int LEVEL_MEDIUM =2;
+    private int LEVEL_HARD =3;
     private int level = LEVEL_EASY;
     LinearLayout linearLayout;
     RelativeLayout relativeLayout;
@@ -463,8 +463,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     mView.setErase(false);
-                    mView.setBrushSize(largeBrush);
-                    mView.setLastBrushSize(largeBrush);
+                    mView.setBrushSize(xlBrush);
+                    mView.setLastBrushSize(xlBrush);
                     mView.setAlpha(255);
                     brushDialog.dismiss();
                 }
@@ -474,8 +474,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     mView.setErase(false);
-                    mView.setBrushSize(largeBrush);
-                    mView.setLastBrushSize(largeBrush);
+                    mView.setBrushSize(xxlBrush);
+                    mView.setLastBrushSize(xxlBrush);
                     mView.setAlpha(255);
                     brushDialog.dismiss();
                 }
@@ -528,8 +528,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     mView.setErase(false);
-                    mView.setBrushSize(largeBrush);
-                    mView.setLastBrushSize(largeBrush);
+                    mView.setBrushSize(xlBrush);
+                    mView.setLastBrushSize(xlBrush);
                     mView.setAlpha(125);
                     brushDialog.dismiss();
                 }
@@ -539,8 +539,8 @@ public class DrawingActivity extends Activity implements View.OnClickListener{
                 @Override
                 public void onClick(View v) {
                     mView.setErase(false);
-                    mView.setBrushSize(largeBrush);
-                    mView.setLastBrushSize(largeBrush);
+                    mView.setBrushSize(xxlBrush);
+                    mView.setLastBrushSize(xxlBrush);
                     mView.setAlpha(125);
                     brushDialog.dismiss();
                 }
