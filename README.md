@@ -2,7 +2,7 @@
 <br/>
 >>Department of Computer Science
 <br/>
->>CSC780 Application Development for Mobile Devices
+>>CSC780 Application Development for Mobile Devices<br>
 DrawSome is an interactive drawing app. It uses bluetooth to show what you are drawing on your device on a different device. This happens in realtime giving unique experience to users. The objective is for the other to guess what you draw.
 
 <h4>To install the DrawSome app follow the below instructions:</h4>
