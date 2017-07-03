@@ -10,8 +10,11 @@ DrawSome is an interactive drawing app. It uses bluetooth to show what you are d
 3. Build and run, Enjoy! We hope you like it.
 <br><br>
 ![](https://github.com/omersalar/CSC780/blob/master/Screenshots/home_screen.png)
+
 ![](https://github.com/omersalar/CSC780/blob/master/Screenshots/difficulty_screen.png)
+
 ![](https://github.com/omersalar/CSC780/blob/master/Screenshots/drawing_screen_primary.png)
+
 ![](https://github.com/omersalar/CSC780/blob/master/Screenshots/drawing_screen_secondary.png)
 <br>
 <h4>Troubleshooting:</h4>
